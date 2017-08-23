@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingLeft="10dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:id="@+id/view_search_shop"
+    >
+
+    <AutoCompleteTextView
+		  android:id="@+id/cet_search_shop"
+		  android:layout_marginLeft="5dip"
+		  android:layout_marginRight="5dip"
+		  android:padding="8dp"
+		  android:layout_width="fill_parent"
+		  android:layout_height="wrap_content"
+		  android:background="@drawable/sel_edittext_bg"
+		  android:drawableLeft="@drawable/icon_search"
+		  android:hint="输入店铺名称"
+		  android:singleLine="true"
+		  android:imeOptions="actionSearch"
+		  android:textColor="@color/colorPrimary"
+		  android:textSize="@dimen/normal_text_size" />
+		    <TextView
+		        android:id="@+id/tv_search_shop"
+		        android:layout_width="wrap_content"
+		        android:layout_height="fill_parent"
+		        android:layout_alignRight="@+id/cet_search_shop"
+		        android:layout_alignTop="@+id/cet_search_shop"
+		        android:layout_alignBottom="@+id/cet_search_shop"
+		        android:paddingLeft="12dp"
+		        android:paddingRight="12dp"
+		        android:text="搜索"
+		        android:gravity="center"
+		        android:textSize="@dimen/normal_text_size"
+		        style="@style/ButtonTranslucent_1"
+		        />
+</RelativeLayout>
