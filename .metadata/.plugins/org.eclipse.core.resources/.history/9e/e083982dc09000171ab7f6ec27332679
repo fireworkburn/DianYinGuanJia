@@ -1,0 +1,6 @@
+package com.znt.vodbox.activity;
+
+public class AddDeviceActivity extends BaseActivity
+{
+
+}

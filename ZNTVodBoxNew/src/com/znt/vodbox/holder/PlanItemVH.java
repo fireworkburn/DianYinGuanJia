@@ -3,6 +3,7 @@ package com.znt.vodbox.holder;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zhy.http.okhttp.request.GetRequest;
 import com.znt.vodbox.R;
 import com.znt.vodbox.activity.PlanDetailActivity;
 import com.znt.vodbox.entity.PlanInfor;
@@ -104,27 +105,27 @@ public class PlanItemVH extends BaseViewHolder<PlanInfor>
 			viewOperation.setVisibility(View.VISIBLE);
 		
 		tvName.setText(infor.getPlanName());
-		tvTime.setText("创建时间： " + infor.getPublishTimeFormat());
+		tvTime.setText(context.getResources().getString(R.string.plan_create_time) + infor.getPublishTimeFormat());
 		
 		
 		String planFlag = infor.getPlanFlag();
 		if(planFlag.equals("0"))
 		{
-			tvTypeTime.setText("应用店铺：全部店铺");
+			tvTypeTime.setText(context.getResources().getString(R.string.plan_application_type_all));
 		}
 		else
 		{
-			tvTypeTime.setText("应用店铺：指定店铺  " + infor.getDeviceList().size() + " 个");
+			tvTypeTime.setText(context.getResources().getString(R.string.plan_application_type) + infor.getDeviceList().size() + " 个");
 		}
 		
 		String planType = infor.getPlanType();
 		if(planType.equals("0"))
 		{
-			tvTypeShop.setText("计划类型：指定日期计划:  " + infor.getStartDate() + "~" + infor.getEndDate());
+			tvTypeShop.setText(context.getResources().getString(R.string.plan_time_type) + infor.getStartDate() + "~" + infor.getEndDate());
 		}
 		else
 		{
-			tvTypeShop.setText("计划类型：每天的计划");
+			tvTypeShop.setText(context.getResources().getString(R.string.plan_time_all));
 		}
 	}
 

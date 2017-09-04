@@ -1,0 +1,411 @@
+/*  
+* @Project: ZNTVodBox 
+* @User: Administrator 
+* @Description: 瀹跺涵闊充箰
+* @Author锛� yan.yu
+* @Company锛歨ttp://www.zhunit.com/
+* @Date 2016-6-1 涓嬪崍4:47:57 
+* @Version V1.1   
+*/ 
+
+package com.znt.vodbox.activity; 
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
+
+import com.znt.diange.mina.cmd.DeviceInfor;
+import com.znt.diange.mina.entity.MediaInfor;
+import com.znt.vodbox.R;
+import com.znt.vodbox.adapter.MusicAdapter;
+import com.znt.vodbox.dialog.EditNameDialog;
+import com.znt.vodbox.dialog.MusicPlayDialog;
+import com.znt.vodbox.dialog.VideoDirectionDialog;
+import com.znt.vodbox.dialog.VolumeSetDialog;
+import com.znt.vodbox.entity.Constant;
+import com.znt.vodbox.entity.LocationInfor;
+import com.znt.vodbox.entity.MusicEditType;
+import com.znt.vodbox.factory.HttpFactory;
+import com.znt.vodbox.http.HttpMsg;
+import com.znt.vodbox.http.HttpResult;
+import com.znt.vodbox.utils.DateUtils;
+import com.znt.vodbox.utils.ViewUtils;
+import com.znt.vodbox.view.listview.LJListView;
+import com.znt.vodbox.view.listview.LJListView.IXListViewListener;
+
+/** 
+ * @ClassName: ShopDetailActivity 
+ * @Description: TODO
+ * @author yan.yu 
+ * @date 2016-6-1 涓嬪崍4:47:57  
+ */
+public class ShopDetailActivity extends BaseActivity implements IXListViewListener, OnItemClickListener, OnClickListener
+{
+
+	private LJListView listView = null;
+	
+	private View viewHeader = null;
+	private TextView tvPlaySong = null;
+	private TextView tvSongCount = null;
+	private TextView tvVolume = null;
+	private TextView tvStatus = null;
+	
+	private View viewPush = null;
+	private View viewVolum = null;
+	private View viewPlan = null;
+	private View viewRecommand = null;
+	
+	private HttpFactory httpFactory = null;
+	private MusicAdapter adapter = null;
+	private DeviceInfor deviceInfor = null;
+	private List<MediaInfor> mediaList = new ArrayList<MediaInfor>();
+	
+	private String shopNewName = null;
+	private int pageNum = 1;
+	private int total = 0;
+	private boolean isRunning = false;
+	private boolean isVolumeUpdated = false;
+	private Handler handler = new Handler()
+	{
+		public void handleMessage(android.os.Message msg) 
+		{
+			if(msg.what == HttpMsg.GET_SPEAKER_MUSIC_START)
+			{
+				//showLoadingView(true);
+				isRunning = true;
+			}
+			else if(msg.what == HttpMsg.GET_SPEAKER_MUSIC_SUCCESS)
+			{
+				HttpResult result = (HttpResult)msg.obj;
+				total = result.getTotal();
+				List<MediaInfor> tempList = (List<MediaInfor>)result.getReuslt();
+				if(tempList.size() == 0)
+				{
+					if(pageNum == 1)
+						showNoDataView(getString(R.string.no_music_play_by_cur_plan));
+					/*else
+						showToast("娌℃湁鏇村姝屾洸浜�");*/
+				}
+				else
+				{
+					if(pageNum == 1)
+						mediaList.clear();
+					mediaList.addAll(tempList);
+					adapter.notifyDataSetChanged();
+					hideHintView();
+				}
+				tvSongCount.setText(getResources().getString(R.string.cur_play_list)+"(" +total + ")");
+				//showLoadingView(false);
+				isRunning = false;
+				pageNum ++;
+				onLoad(0);
+			}
+			else if(msg.what == HttpMsg.GET_SPEAKER_MUSIC_FAIL)
+			{
+				isRunning = false;
+				onLoad(0);
+			}
+		};
+	};
+	
+	/**
+	*callbacks
+	*/
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.activity_shop_detail);
+		
+		showTopView(true);
+		//setRightText(getResources().getString(R.string.nav_main_plans));
+		showRightImageView(true);
+		setRightTopIcon(R.drawable.icon_top_right_more);
+		
+		viewHeader = LayoutInflater.from(getActivity()).inflate(R.layout.view_shop_detail_header, null);
+		tvPlaySong = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_song);
+		tvSongCount = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_song_count);
+		tvStatus = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_status);
+		tvVolume = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_volume);
+		
+		viewPush = viewHeader.findViewById(R.id.view_shop_opr_push);
+		viewVolum = viewHeader.findViewById(R.id.view_shop_opr_volum);
+		viewPlan = viewHeader.findViewById(R.id.view_shop_opr_plan);
+		viewRecommand = viewHeader.findViewById(R.id.view_shop_opr_recomand);
+		
+		listView = (LJListView)findViewById(R.id.ptrl_shop_music);
+		
+		tvVolume.setOnClickListener(this);
+		viewPush.setOnClickListener(this);
+		viewVolum.setOnClickListener(this);
+		viewPlan.setOnClickListener(this);
+		viewRecommand.setOnClickListener(this);
+		
+		listView.addHeader(viewHeader);
+		listView.getListView().setDivider(getResources().getDrawable(R.color.transparent));
+		listView.getListView().setDividerHeight(1);
+		listView.setPullLoadEnable(true,"鍏�5鏉℃暟鎹�"); //濡傛灉涓嶆兂璁╄剼鏍囨樉绀烘暟鎹彲浠ListView.setPullLoadEnable(false,null)鎴栬�卪ListView.setPullLoadEnable(false,"")
+		listView.setPullRefreshEnable(true);
+		listView.setIsAnimation(true); 
+		listView.setXListViewListener(this);
+		listView.showFootView(false);
+		listView.setRefreshTime();
+		listView.setOnItemClickListener(this);
+		
+		adapter = new MusicAdapter(this, mediaList, handler);
+		adapter.setMusicEditType(MusicEditType.None);
+		adapter.setCurPlayView(tvPlaySong);
+		listView.setAdapter(adapter);
+		
+		httpFactory = new HttpFactory(getActivity(), handler);
+		
+		deviceInfor = (DeviceInfor)getIntent().getSerializableExtra("DeviceInfor");
+		
+		initHeaderData();
+		
+		listView.onFresh();
+		
+		getRightView().setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("DeviceInfor", deviceInfor);
+				ViewUtils.startActivity(getActivity(), ShopSettingActivity.class, bundle);
+			}
+		});
+		
+	}
+	
+	private void initHeaderData()
+	{
+		setCenterString(deviceInfor.getName());
+		tvVolume.setText(getResources().getString(R.string.cur_volume) + "(" + deviceInfor.getVolume() + " / 15)");
+		if(!TextUtils.isEmpty(deviceInfor.getCurPlaySong()))
+		{
+			if(deviceInfor.getPlayingSongType().equals("0"))
+				tvPlaySong.setText(getResources().getString(R.string.mucis_current_play) + deviceInfor.getCurPlaySong());
+			else if(deviceInfor.getPlayingSongType().equals("1"))
+				tvPlaySong.setText(getResources().getString(R.string.mucis_current_push) + deviceInfor.getCurPlaySong());
+		}
+		else
+			tvPlaySong.setText(getResources().getString(R.string.offline));
+		tvSongCount.setText(getResources().getString(R.string.cur_play_list)+"(" + deviceInfor.getMusicCount() + ")");
+		
+		if(deviceInfor.isOnline())
+		{
+			tvStatus.setText(getResources().getString(R.string.status_off_online));
+			tvStatus.setTextColor(getResources().getColor(R.color.red));
+		}
+		else
+		{
+			tvStatus.setText(getResources().getString(R.string.status_off_line));
+			tvStatus.setTextColor(getResources().getColor(R.color.text_black_mid));
+		}
+		
+	}
+
+	private void onLoad(int updateCount) 
+	{
+		listView.setCount(updateCount);
+		listView.stopLoadMore();
+		listView.stopRefresh();
+		listView.setRefreshTime();
+		if(mediaList.size() >= total)
+			listView.showFootView(false);
+		else
+			listView.showFootView(true);
+	}
+	
+	/**
+	*callbacks
+	*/
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3)
+	{
+		// TODO Auto-generated method stub
+		if(pos >= 2)
+			pos = pos - 2;
+		MediaInfor infor = mediaList.get(pos);
+		infor.setFromAlbum(true);
+		showPlayDialog(infor);
+	}
+	
+	private void getPlanMusics()
+	{
+		httpFactory.getSpeakerMusic(deviceInfor.getCode(), pageNum);
+	}
+
+	/**
+	*callbacks
+	*/
+	@Override
+	protected void onDestroy() 
+	{
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		if(httpFactory != null)
+			httpFactory.stopHttp();
+	}
+
+	/**
+	*callbacks
+	*/
+	@Override
+	public void onRefresh() 
+	{
+		// TODO Auto-generated method stub
+		if(isRunning)
+			return;
+		pageNum = 1;
+		getPlanMusics();
+	}
+
+	/**
+	*callbacks
+	*/
+	@Override
+	public void onLoadMore()
+	{
+		// TODO Auto-generated method stub
+		if(total > mediaList.size())
+			getPlanMusics();
+	}
+	
+	/**
+	*callbacks
+	*/
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		//LogFactory.createLog().e("resultCode-->" + resultCode);
+		if(resultCode != RESULT_OK)
+			return;
+		LocationInfor locationInfor = (LocationInfor) data.getSerializableExtra("LocationInfor");
+		
+		deviceInfor.setLat(locationInfor.getLat());
+		deviceInfor.setLon(locationInfor.getLon());
+		deviceInfor.setAddr(locationInfor.getAddr());
+		httpFactory.updateSpeakerInfor(deviceInfor);
+		//LogFactory.createLog().e("get cur addr-->" + deviceInfor.getAddr());
+		
+	}
+
+	/**
+	*callbacks
+	*/
+	@Override
+	public void onClick(View v) 
+	{
+		if(v == viewPush)
+		{
+			Bundle bundle = new Bundle();
+			bundle.putString("terminalId", deviceInfor.getCode());
+			ViewUtils.startActivity(getActivity(), SearchMusicActivity.class, bundle);
+		}
+		else if(v == viewVolum)
+		{
+			showVolumeDialog(deviceInfor);
+		}
+		else if(v == viewPlan)
+		{
+			Bundle bundle = new Bundle();
+			bundle.putString("terminalId", deviceInfor.getCode());
+			bundle.putString("terminalName", deviceInfor.getName());
+			ViewUtils.startActivity(getActivity(), PlanListActivity.class, bundle);
+		}
+		else if(v == viewRecommand)
+		{
+			Bundle bundle = new Bundle();
+			bundle.putString("terminalId", deviceInfor.getCode());
+			bundle.putSerializable("MusicEditType", MusicEditType.DeleteAdd);
+			ViewUtils.startActivity(getActivity(), AlbumMusicActivity.class, bundle);
+		}
+	}
+	private void showPlayDialog(final MediaInfor infor)
+	{
+		final MusicPlayDialog playDialog = new MusicPlayDialog(getActivity(), R.style.Theme_CustomDialog);
+		
+		playDialog.setInfor(infor);
+		//playDialog.updateProgress("00:02:18 / 00:05:12");
+		if(playDialog.isShowing())
+			playDialog.dismiss();
+		playDialog.show();
+		playDialog.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				// TODO Auto-generated method stub
+				
+				if(infor.getMediaType().equals(MediaInfor.MEDIA_TYPE_PHONE))
+				{
+					Bundle bundle = new Bundle();
+					bundle.putString("KEY_WORD", infor.getMediaName());
+					ViewUtils.startActivity(getActivity(), SearchMusicActivity.class, bundle);
+				}
+				else
+				{
+					
+				}
+				playDialog.dismiss();
+			}
+		});
+		
+		WindowManager windowManager = ((Activity) getActivity()).getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		WindowManager.LayoutParams lp = playDialog.getWindow().getAttributes();
+		lp.width = (int)(display.getWidth()); //璁剧疆瀹藉害
+		lp.height = (int)(display.getHeight()); //璁剧疆楂樺害
+		playDialog.getWindow().setAttributes(lp);
+	}
+
+	private void showVolumeDialog(final DeviceInfor devInfor)
+	{
+		final VolumeSetDialog playDialog = new VolumeSetDialog(getActivity(), devInfor);
+	
+		//playDialog.updateProgress("00:02:18 / 00:05:12");
+		if(playDialog.isShowing())
+			playDialog.dismiss();
+		playDialog.show();
+		playDialog.setOnDismissListener(new OnDismissListener()
+		{
+			@Override
+			public void onDismiss(DialogInterface arg0) 
+			{
+				// TODO Auto-generated method stub
+				isVolumeUpdated = playDialog.isVolumeUpdated();
+				tvVolume.setText(getResources().getString(R.string.volume) + "(" + playDialog.getCurVolume() + " / 15)");
+				deviceInfor.setVolume(playDialog.getCurVolume() + "");
+			}
+		});
+		WindowManager windowManager = ((Activity) getActivity()).getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		WindowManager.LayoutParams lp = playDialog.getWindow().getAttributes();
+		lp.width = (int)(display.getWidth()); //璁剧疆瀹藉害
+		lp.height = (int)(display.getHeight()); //璁剧疆楂樺害
+		playDialog.getWindow().setAttributes(lp);
+	}
+}
+ 

@@ -1,0 +1,315 @@
+package cq.airbnb;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.content.Context;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.TextView;
+
+import cq.behaviordemo.Constants;
+import cq.behaviordemo.R;
+
+/**
+ * 鎺у埗tab
+ */
+
+public class TabBehavior extends CoordinatorLayout.Behavior {
+    /**
+     * 鍚戜笅婊戝姩鐨勬渶澶ц窛绂�
+     */
+    private int mTranslationMax;
+
+    /**
+     * 鏈�灏忕殑璺濈
+     */
+    private int mTranslationMin;
+
+    private int mHeightChild;
+    /**
+     * 鍚戜笂婊戝姩,杩樻槸鍚戜笅婊戝姩
+     */
+    private boolean mUp;
+    /**
+     * 鎵嬫寚鎺у埗鐨勬粦鍔�
+     */
+    private boolean mControlChange;
+
+    /**
+     * mValueAnimatorStyle 鏀瑰彉鏍峰紡
+     */
+    private ValueAnimator mValueAnimator;
+    private ViewPager mViewPager;
+    private TabLayout mTab;
+
+    /**
+     * 鏍囪鏄惁鏄渶瑕佹敼鍙樻牱寮�
+     * 1 澶撮儴鍙樉绀簍ab鐨勬椂鍊� 鍒囨崲涓�娆�
+     * 2 澶撮儴鐨勬樉绀鸿秴鍑� tab鍜� all鐨勬椂鍊欏垏鎹竴娆�
+     */
+    private boolean mWhiteStyle = false;
+    private TextView mTxtAll;
+    private View mLytContent, mLytAll;
+    private Context mContext;
+    private int mWhite = 0xFFFFFFFF;
+    private int mGreen = 0xFF128488;
+
+    public TabBehavior(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mValueAnimator = ValueAnimator.ofFloat(0, 1);
+        mContext = context;
+        mTranslationMax = context.getResources().getDimensionPixelOffset(R.dimen.airbnb_translation_max);
+        mTranslationMin = context.getResources().getDimensionPixelOffset(R.dimen.airbnb_translation_min);
+        mHeightChild = context.getResources().getDimensionPixelOffset(R.dimen.tab_height);
+
+    }
+
+    @Override public boolean onLayoutChild(CoordinatorLayout parent, View child, int layoutDirection) {
+        parent.onLayoutChild(child, layoutDirection);
+        if(mTab==null){
+            mTab = (TabLayout) child;
+            mViewPager = (ViewPager) parent.findViewById(R.id.viewpager);
+            mLytAll = parent.findViewById(R.id.lyt_all);
+            mTxtAll = (TextView) mLytAll.findViewById(R.id.txt_all);
+            mLytContent = parent.findViewById(R.id.content);
+            mTab.setTranslationY(mTranslationMin);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, View child, View directTargetChild, View target, int nestedScrollAxes) {
+        mControlChange = true;
+        return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+    }
+
+
+    /**
+     * @param dy 鍚戜笂婊戝ぇ浜�0
+     */
+    @Override
+    public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dx, int dy, int[] consumed) {
+        mUp = dy > 0;
+        if (mValueAnimator.isRunning()) {
+            mValueAnimator.cancel();
+        }
+
+        //濡傛灉list闇�瑕佹粦鍔� 涓� 涓嶆槸(鍚戜笂婊�&&tab涓嶅湪椤堕儴)
+
+        if (isChildRequestScroll(child.getTranslationY())) {
+            consumed[1] = 0;
+            return;
+        }
+
+        consumed[1] = dy;//鍏ㄩ儴娑堣��
+        int distance = -dy / 2;//闄嶄綆绉诲姩鐨勯�熷害
+
+
+        if (child.getTranslationY() + distance > mTranslationMax) {//澶т簬鏈�澶ц窛绂�
+            distance = mTranslationMax;
+        } else if (child.getTranslationY() + distance < 0) {//鍒伴《閮�
+            distance = 0;
+        } else {//姝ｅ父
+            distance = (int) (child.getTranslationY() + distance);
+        }
+
+        //鍒ゆ柇搴旇鏄剧ず鐨勬牱寮�
+        if (mUp && distance < (mTranslationMin - mHeightChild / 2) && !mWhiteStyle) {
+            setWhiteStyle();
+        } else if (!mUp && distance > (mTranslationMin + mHeightChild / 2) && mWhiteStyle) {
+            setGreenStyle();
+        }
+        child.setTranslationY(distance);
+    }
+
+    private void setGreenStyle() {
+        mWhiteStyle = false;
+        mTab.setTabTextColors(android.R.color.darker_gray, mWhite);
+        mLytAll.setBackgroundResource(R.drawable.bg_airbnb_condition);
+        mTxtAll.setTextColor(mWhite);
+        mTab.setSelectedTabIndicatorColor(mWhite);
+
+        mLytContent.setBackgroundResource(R.color.airbnb_bg);
+
+    }
+
+    private void setWhiteStyle() {
+        mWhiteStyle = true;
+        mTab.setTabTextColors(android.R.color.darker_gray, mGreen);
+        mLytAll.setBackgroundResource(R.drawable.bg_airbnb_condition_gray);
+        mTxtAll.setTextColor(android.R.color.black);
+        mTab.setSelectedTabIndicatorColor(mGreen);
+
+        mLytContent.setBackgroundResource(android.R.color.white);
+    }
+
+
+    @Override
+    public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, View child, View target) {
+        mControlChange = false;
+        float translationY = child.getTranslationY();
+        if (translationY == mTranslationMax || translationY == mTranslationMin || translationY == 0) {
+            return;
+        }
+
+        scroll(child, translationY);
+
+    }
+
+
+    /**
+     * list 涓嶉渶瑕佹粦鍔ㄥ氨鎷︽埅.闇�瑕佸氨涓嶆嫤鎴�
+     */
+
+    @Override
+    public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, View child, View target, float velocityX, float velocityY) {
+        if (velocityY < -1000 && child.getTranslationY() == 0) {//鍚戜笅婊戠殑閫熷害灏忎簬璐�1000
+            mControlChange = false;
+            showSearchAll();
+        }
+
+        return !isChildRequestScroll(child.getTranslationY());
+    }
+
+    /**
+     * 涓夌鎯呭喌
+     * 1 鍦ㄩ《閮�
+     * 2 鍦╝ll鐨勪笅闈�
+     * 3 鍦╟ondition鐨勪笅闈�
+     */
+    private void scroll(final View child, final float translationY) {
+        final float shouldMoveDistance;
+        if (translationY < mHeightChild / 2) {//杩欐鍘绘渶涓婇潰
+            shouldMoveDistance = -translationY;
+        } else if ((translationY > mHeightChild / 2 && translationY < (mTranslationMin + mHeightChild / 2)) ||
+                (mUp && translationY < (mTranslationMax - mHeightChild))) {//鍥炲埌涓棿鐨勭偣
+            shouldMoveDistance = mTranslationMin - translationY;
+        } else {//鍘绘渶涓嬮潰
+            shouldMoveDistance = mTranslationMax - translationY;
+        }
+
+
+        mValueAnimator.setDuration((long) (Math.abs(shouldMoveDistance) / mTranslationMax * Constants.DURATION_SCROLL));
+        mValueAnimator.removeAllUpdateListeners();
+        mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                child.setTranslationY(translationY + animation.getAnimatedFraction() * shouldMoveDistance);
+            }
+        });
+        mValueAnimator.start();
+    }
+
+
+    /**
+     * Child鏄惁闇�瑕佹粦鍔�
+     */
+    private boolean isChildRequestScroll(float translationY) {
+        PagerAdapter adapter = mViewPager.getAdapter();
+        boolean shouldNotRefresh=translationY==mTranslationMin||translationY==0;//杩欎袱涓綅缃殑鏃跺�欎笉搴旇鍒锋柊
+        return ((translationY == 0 ||((translationY==mTranslationMax||shouldNotRefresh)&&!mUp))&&/*鍦ㄩ《閮�,鎴栧湪搴曢儴涓斿悜涓嬫粦,鍦ㄥ垵濮嬩綅缃殑鏃跺��,涓嶇粰鍒锋柊,浣嗘槸鍙互鍚戜笅婊�*/
+                adapter != null && //鏈夐�傞厤鍣�
+                adapter.getCount() > 0 &&//鏈塱tem
+                adapter instanceof IsChildRequestScrollListener && //瀹炵幇浜�
+                ((IsChildRequestScrollListener) adapter).requestScroll(mUp,shouldNotRefresh)//闇�瑕佹粦鍔�
+        );
+    }
+
+
+    /**
+     * 鏄剧ず鎼滅储鍏ㄩ儴
+     */
+    public void showSearchAll() {
+        if (!mControlChange && mTab.getTranslationY() == 0 && !mValueAnimator.isRunning()) {
+            mValueAnimator.setDuration(500);
+            final float startTranslation = mTab.getTranslationY();
+            mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mTab.setTranslationY(startTranslation + animation.getAnimatedFraction() * (mTranslationMin - startTranslation));
+                }
+            });
+            mValueAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mTab.setTranslationY(mTranslationMin);
+                    mValueAnimator.removeAllListeners();
+                    mValueAnimator.removeAllUpdateListeners();
+                }
+            });
+            mValueAnimator.start();
+        }
+    }
+
+
+    /**
+     * 闅愯棌鎼滅储鐨勮缁嗘潯浠�
+     */
+    public void hideItem() {
+        if (!mValueAnimator.isRunning()) {
+
+            mValueAnimator.setDuration(500);
+            mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float translation = mTranslationMin + (1 - animation.getAnimatedFraction()) * (mTranslationMax - mTranslationMin);
+                    mTab.setTranslationY(translation);
+                }
+            });
+            mValueAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mTab.setTranslationY(mTranslationMin);
+                    mValueAnimator.removeAllListeners();
+                    mValueAnimator.removeAllUpdateListeners();
+                }
+            });
+            mValueAnimator.start();
+        }
+    }
+
+    /*@Override public void onDetachedFromLayoutParams() {
+        super.onDetachedFromLayoutParams();
+        mValueAnimator.cancel();
+    }*/
+
+    /**
+     * list fling鍒板ご鐨勬椂鍊� 灞曞紑
+     */
+    public void needExpand() {
+        if (!mControlChange && mTab.getTranslationY() != mTranslationMax && !mValueAnimator.isRunning()) {
+            mValueAnimator.setDuration(500);
+            final float startTranslation = mTab.getTranslationY();
+
+            mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int translation = (int) (startTranslation + animation.getAnimatedFraction() * (mTranslationMax - startTranslation));
+                    mTab.setTranslationY(translation);
+                    if (mWhiteStyle && translation > (mTranslationMin + mHeightChild / 2)) {
+                        mWhiteStyle = false;
+                        setGreenStyle();
+                    }
+
+                }
+            });
+            mValueAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mTab.setTranslationY(mTranslationMax);
+                    mValueAnimator.removeAllListeners();
+                    mValueAnimator.removeAllUpdateListeners();
+                }
+            });
+            mValueAnimator.start();
+        }
+    }
+}

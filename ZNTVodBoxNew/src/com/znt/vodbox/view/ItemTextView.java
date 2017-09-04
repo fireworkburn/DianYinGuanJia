@@ -116,6 +116,10 @@ public class ItemTextView extends RelativeLayout
 	{
 		ivIcon.setVisibility(View.GONE);
 	}
+	public void showIocn()
+	{
+		ivIcon.setVisibility(View.VISIBLE);
+	}
 	public ImageView getIconView()
 	{
 		ivIcon.setVisibility(View.VISIBLE);

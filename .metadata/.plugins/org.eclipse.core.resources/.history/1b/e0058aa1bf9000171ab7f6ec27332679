@@ -1,0 +1,6 @@
+package com.znt.vodbox.activity;
+
+public class LevelShopActivity extends BaseActivity
+{
+
+}

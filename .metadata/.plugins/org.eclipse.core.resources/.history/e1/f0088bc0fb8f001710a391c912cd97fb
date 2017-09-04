@@ -1,0 +1,253 @@
+package com.znt.vodbox.activity;
+
+import java.util.List;
+
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.view.Display;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+
+import com.znt.diange.mina.cmd.DeviceInfor;
+import com.znt.diange.mina.entity.MediaInfor;
+import com.znt.vodbox.R;
+import com.znt.vodbox.dialog.EditNameDialog;
+import com.znt.vodbox.dialog.VideoDirectionDialog;
+import com.znt.vodbox.factory.HttpFactory;
+import com.znt.vodbox.http.HttpMsg;
+import com.znt.vodbox.http.HttpResult;
+import com.znt.vodbox.utils.DateUtils;
+import com.znt.vodbox.utils.ViewUtils;
+import com.znt.vodbox.view.ItemTextView;
+
+public class ShopSettingActivity extends BaseActivity implements OnClickListener
+{
+
+	private ItemTextView itvName = null;
+	private ItemTextView itvAddr = null;
+	private ItemTextView itvOritation = null;
+	private ItemTextView itvLastOnline = null;
+	private ItemTextView itvEndTime = null;
+	private ItemTextView itvVersion = null;
+	private ItemTextView itvWifiName = null;
+	private ItemTextView itvWifiPwd = null;
+	private ItemTextView itvIp = null;
+	private ItemTextView itvStorage = null;
+	
+	private DeviceInfor deviceInfor = null;
+	
+	private HttpFactory httpFactory = null;
+	
+	private Handler handler = new Handler()
+	{
+		public void handleMessage(android.os.Message msg) 
+		{
+			if(msg.what == HttpMsg.UPDATE_SPEAKER_INFOR_START)
+			{
+				showProgressDialog(getActivity(), getString(R.string.update_speaker_infor_doing));
+			}
+			else if(msg.what == HttpMsg.UPDATE_SPEAKER_INFOR_SUCCESS)
+			{
+				dismissDialog();
+				showToast(R.string.update_speaker_infor_success);
+				itvAddr.getSecondView().setText(deviceInfor.getAddr());
+				if(!TextUtils.isEmpty(deviceInfor.getName()))
+					itvName.getSecondView().setText(deviceInfor.getName());
+			}
+			else if(msg.what == HttpMsg.UPDATE_SPEAKER_INFOR_FAIL)
+			{
+				showToast(R.string.update_speaker_infor_fail);
+				dismissDialog();
+			}
+		};
+	};
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.view_shop_setting);
+		
+		setCenterString(getResources().getString(R.string.shop_setting));
+		
+		itvName = (ItemTextView)findViewById(R.id.itv_shop_setting_name);
+		itvAddr = (ItemTextView)findViewById(R.id.itv_shop_setting_addr);
+		itvOritation = (ItemTextView)findViewById(R.id.itv_shop_setting_oritation);
+		itvLastOnline = (ItemTextView)findViewById(R.id.itv_shop_setting_last_online_time);
+		itvEndTime = (ItemTextView)findViewById(R.id.itv_shop_setting_dead_time);
+		itvVersion = (ItemTextView)findViewById(R.id.itv_shop_setting_version);
+		itvWifiName = (ItemTextView)findViewById(R.id.itv_shop_setting_wifi_name);
+		itvWifiPwd = (ItemTextView)findViewById(R.id.itv_shop_setting_wifi_pwd);
+		itvIp = (ItemTextView)findViewById(R.id.itv_shop_setting_ip);
+		itvStorage = (ItemTextView)findViewById(R.id.itv_shop_setting_storage);
+		
+		deviceInfor = (DeviceInfor) getIntent().getSerializableExtra("DeviceInfor");
+		
+		initViews();
+		
+		httpFactory = new HttpFactory(getActivity(), handler);
+	}
+	
+	private void initViews()
+	{
+		itvName.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_name));
+		itvAddr.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_addr));
+		itvOritation.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_oritation));
+		itvLastOnline.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_last_online_time));
+		itvEndTime.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_dead_time));
+		itvVersion.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_version));
+		itvWifiName.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_wifi_name));
+		itvWifiPwd.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_wifi_pwd));
+		itvIp.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_ip));
+		itvStorage.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_storage));
+		
+		
+		itvName.showMoreButton(true);
+		itvAddr.showMoreButton(true);
+		itvOritation.showMoreButton(true);
+		
+		
+		itvName.getSecondView().setText(deviceInfor.getName());
+		itvAddr.getSecondView().setText(deviceInfor.getAddr());
+		itvOritation.getSecondView().setText(getVideoWhirl(deviceInfor.getVideoWhirl()));
+		itvLastOnline.getSecondView().setText(DateUtils.getDateFromLong(Long.parseLong(deviceInfor.getLastBootTime())));
+		itvEndTime.getSecondView().setText(DateUtils.getDateFromLong(Long.parseLong(deviceInfor.getEndTime())));
+		itvVersion.getSecondView().setText(deviceInfor.getVersion());
+		itvWifiName.getSecondView().setText(deviceInfor.getWifiName());
+		itvWifiPwd.getSecondView().setText(deviceInfor.getWifiPwd());
+		itvIp.getSecondView().setText(deviceInfor.getIp());
+		itvStorage.getSecondView().setText(deviceInfor.getNetInfo());
+		
+		/*itvName.showIocn();
+		itvAddr.showIocn();
+		itvOritation.showIocn();
+		itvLastOnline.showIocn();
+		itvEndTime.showIocn();
+		itvVersion.showIocn();
+		itvWifiName.showIocn();
+		itvWifiPwd.showIocn();
+		itvIp.showIocn();
+		itvStorage.showIocn();*/
+		
+		itvName.setOnClick(this);
+		itvAddr.setOnClick(this);
+		itvOritation.setOnClick(this);
+	}
+
+	private String getVideoWhirl(String videoWhirl)
+	{
+		if(videoWhirl.equals("0"))
+		{
+			return getResources().getString(R.string.video_oritation_1);
+		}
+		else if(videoWhirl.equals("1"))
+		{
+			return getResources().getString(R.string.video_oritation_2);
+		}
+		else if(videoWhirl.equals("2"))
+		{
+			return getResources().getString(R.string.video_oritation_3);
+		}
+		else if(videoWhirl.equals("3"))
+		{
+			return getResources().getString(R.string.video_oritation_4);
+		}
+		return getResources().getString(R.string.screen_oritiontion)+videoWhirl;
+	}
+	
+	private void showVideoWhirlDialog(final DeviceInfor devInfor)
+	{
+		final VideoDirectionDialog videoDirectionDialog = new VideoDirectionDialog(getActivity());
+	
+		//playDialog.updateProgress("00:02:18 / 00:05:12");
+		if(videoDirectionDialog.isShowing())
+			videoDirectionDialog.dismiss();
+		videoDirectionDialog.showDialog(deviceInfor.getVideoWhirl(), deviceInfor.getCode());
+		videoDirectionDialog.setOnDismissListener(new OnDismissListener()
+		{
+			@Override
+			public void onDismiss(DialogInterface arg0) 
+			{
+				// TODO Auto-generated method stub
+				if(!TextUtils.isEmpty(videoDirectionDialog.getCurDerection()))
+				{
+					deviceInfor.setVideoWhirl(videoDirectionDialog.getCurDerection());
+					viewVideoWhirl.setText(getResources().getString(R.string.screen_oritiontion) + "(" + getVideoWhirl(deviceInfor.getVideoWhirl()) + ")");
+				}
+				//
+			}
+		});
+		WindowManager windowManager = ((Activity) getActivity()).getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		WindowManager.LayoutParams lp = videoDirectionDialog.getWindow().getAttributes();
+		lp.width = (int)(display.getWidth()); //璁剧疆瀹藉害
+		lp.height = (int)(display.getHeight()); //璁剧疆楂樺害
+		videoDirectionDialog.getWindow().setAttributes(lp);
+	}
+	
+	private EditNameDialog editNameDialog = null;
+	private void showEditNameDialog()
+	{
+		if(editNameDialog == null || editNameDialog.isDismissed())
+			editNameDialog = new EditNameDialog(getActivity(), "请输入店铺名称");
+		//playDialog.updateProgress("00:02:18 / 00:05:12");
+		if(editNameDialog.isShowing())
+			editNameDialog.dismiss();
+		editNameDialog.show();
+		final String oldName = deviceInfor.getName();
+		editNameDialog.setInfor(oldName);
+		editNameDialog.setOnClickListener(new OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0)
+			{
+				// TODO Auto-generated method stub
+				if(TextUtils.isEmpty(editNameDialog.getContent()))
+				{
+					showToast(getResources().getString(R.string.please_input_content));
+					return;
+				}
+				if(editNameDialog.getContent().equals(oldName))
+				{
+					showToast(getResources().getString(R.string.name_not_change));
+					return;
+				}
+				httpFactory.updateSpeakerName(editNameDialog.getContent(), deviceInfor.getCode());
+				editNameDialog.dismiss();
+			}
+		});
+		
+		WindowManager windowManager = getActivity().getWindowManager();
+		Display display = windowManager.getDefaultDisplay();
+		WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+		lp.width = (int)(display.getWidth()); //璁剧疆瀹藉害
+		lp.height = (int)(display.getHeight()); //璁剧疆楂樺害
+		dialog.getWindow().setAttributes(lp);
+	}
+	
+	@Override
+	public void onClick(View v) 
+	{
+		// TODO Auto-generated method stub
+		if(v == itvName.getBgView())
+		{
+			showEditNameDialog();
+		}
+		else if(v == itvAddr.getBgView())
+		{
+			ViewUtils.startActivity(getActivity(), LocationActivity.class, null, 1);
+		}
+		else if(v == itvOritation.getBgView())
+		{
+			showVideoWhirlDialog(deviceInfor);
+		}
+	}
+	
+}

@@ -13,6 +13,16 @@ package com.znt.vodbox.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+
 import com.znt.diange.mina.cmd.DeviceInfor;
 import com.znt.vodbox.R;
 import com.znt.vodbox.adapter.Action;
@@ -24,16 +34,7 @@ import com.znt.vodbox.mvp.v.IHttpRequestSpeakerView;
 import com.znt.vodbox.view.ISFooterView;
 import com.znt.vodbox.view.ISHeaderView;
 import com.znt.vodbox.view.RefreshRecyclerView;
-
-import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
+import com.znt.vodbox.view.ShopListHeaderView;
 
 /** 
  * @ClassName: AllShopFragment 
@@ -51,7 +52,7 @@ public class AllShopFragment extends BaseFragment implements IHttpRequestSpeaker
     private static final int ANIM_DURATION_FAB = 400;
 
     private ISFooterView footer = null;
-    private ISHeaderView header = null;
+    private ShopListHeaderView header = null;
     private RefreshRecyclerView mRecyclerView;
     CoordinatorLayout clContent;
     private HttpGetSpeakerPresenter httpGetSpeakerPresenter = null;
@@ -87,7 +88,7 @@ public class AllShopFragment extends BaseFragment implements IHttpRequestSpeaker
 	        clContent = (CoordinatorLayout)parentView.findViewById(R.id.content);
 	        
 	        mRecyclerView = (RefreshRecyclerView) parentView.findViewById(R.id.rvFeed);
-	        header = new ISHeaderView(getActivity());
+	        header = new ShopListHeaderView(getActivity());
 	        footer = new ISFooterView(getActivity());
 	        footer.showLoadReady();
 	        footer.setOnClickListener(new OnClickListener() 
@@ -107,7 +108,7 @@ public class AllShopFragment extends BaseFragment implements IHttpRequestSpeaker
 	        mRecyclerView.setSwipeRefreshColors(0xFF437845, 0xFFE44F98, 0xFF2FAC21);
 	        mRecyclerView.setAdapter(deviceInforAdapter);
 	        
-	        //deviceInforAdapter.addHeaderView(header);
+	        deviceInforAdapter.addHeaderView(header);
 	        deviceInforAdapter.addFootView(footer);
 	        
 	        mRecyclerView.setRefreshAction(new Action() 

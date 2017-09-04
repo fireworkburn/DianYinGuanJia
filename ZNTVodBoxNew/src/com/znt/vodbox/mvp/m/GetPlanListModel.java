@@ -72,6 +72,7 @@ public class GetPlanListModel extends HttpAPI
 			public void onBefore(Request request, int requestId) {
 				// TODO Auto-generated method stub
 				super.onBefore(request, requestId);
+				iGetPlanListView.requestRunning(requestId);
 			}
 			@Override
 			public void onAfter(int requestId) {
@@ -126,6 +127,7 @@ public class GetPlanListModel extends HttpAPI
 			public void onBefore(Request request, int requestId) {
 				// TODO Auto-generated method stub
 				super.onBefore(request, requestId);
+				iGetPlanListView.requestRunning(requestId);
 			}
 			@Override
 			public void onAfter(int requestId) {
@@ -176,6 +178,7 @@ public class GetPlanListModel extends HttpAPI
 			public void onBefore(Request request, int requestId) {
 				// TODO Auto-generated method stub
 				super.onBefore(request, requestId);
+				
 			}
 			@Override
 			public void onAfter(int requestId) {

@@ -267,6 +267,15 @@
 		<activity 
 		    android:name=".activity.ShopActivity"
 		    android:launchMode="singleTask" android:screenOrientation="portrait"></activity>
+		<activity 
+		    android:name=".activity.ShopSettingActivity"
+		    android:launchMode="singleTask" android:screenOrientation="portrait"></activity>
+		<activity 
+		    android:name=".activity.LevelShopActivity"
+		    android:launchMode="singleTask" android:screenOrientation="portrait"></activity>
+		<activity 
+		    android:name=".activity.AddDeviceActivity"
+		    android:launchMode="singleTask" android:screenOrientation="portrait"></activity>
         
     </application>
 

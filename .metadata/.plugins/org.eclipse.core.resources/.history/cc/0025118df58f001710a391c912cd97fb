@@ -1,0 +1,33 @@
+package com.znt.vodbox.activity;
+
+import android.os.Bundle;
+
+import com.znt.vodbox.R;
+import com.znt.vodbox.view.ItemTextView;
+
+public class ShopSettingActivity extends BaseActivity
+{
+
+	private ItemTextView itvJinbi = null;
+	private ItemTextView itvMySpeaker = null;
+	private ItemTextView itvDeviceSelect = null;
+	private ItemTextView itvSongBook = null;
+	private ItemTextView itvSpeakerManager = null;
+	private ItemTextView itvSpeakerCtroll = null;
+	private ItemTextView itvSpeakerRes = null;
+	private ItemTextView itvUpdate = null;
+	private ItemTextView itvMark = null;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.view_shop_setting);
+		
+		setCenterString(getResources().getString(R.string.shop_setting));
+		
+	}
+	
+}

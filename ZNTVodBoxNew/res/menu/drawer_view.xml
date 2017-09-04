@@ -6,8 +6,8 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_top_first_fragment"
-            android:icon="@drawable/icon_add_devices"
-            android:title="@string/nav_add_shop" />
+            android:icon="@drawable/icon_wifi_config"
+            android:title="@string/nav_wifi_config" />
         <!-- <item
             android:id="@+id/nav_top_second_fragment"
             android:icon="@drawable/qrcode_scan"
@@ -36,7 +36,7 @@
             android:title="@string/nav_system_albums" />
 
     </group>
-
+	
     <group
         android:id="@+id/planet_group_2"
         android:checkableBehavior="single"

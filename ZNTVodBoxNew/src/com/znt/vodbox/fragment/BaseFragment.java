@@ -4,6 +4,7 @@ package com.znt.vodbox.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface.OnDismissListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -29,6 +30,7 @@ import com.znt.vodbox.entity.Constant;
 import com.znt.vodbox.entity.LocalDataEntity;
 import com.znt.vodbox.factory.DiangeManger;
 import com.znt.vodbox.netset.WifiFactory;
+import com.znt.vodbox.utils.DensityUtil;
 import com.znt.vodbox.utils.MyToast;
 import com.znt.vodbox.utils.SystemUtils;
 import com.znt.vodbox.view.HintView;
@@ -59,7 +61,7 @@ public abstract class BaseFragment extends Fragment
 	private View viewTopRight = null;
 	private ImageView ivTopRight = null;
 	private ImageView imageView = null;
-	private Toolbar toolbar = null;
+	public Toolbar toolbar = null;
 	
 	/**
 	*callbacks
@@ -79,7 +81,12 @@ public abstract class BaseFragment extends Fragment
 		localData = new LocalDataEntity(getActivity());
 		initTitleViews();
 		
+		/*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            toolbar.setPadding(0, DensityUtil.getStatusBarHeight(getActivity()), 0, 0);
+        }*/
 	}
+	
 	
 	public View getContentView(int layoutResID) 
 	{

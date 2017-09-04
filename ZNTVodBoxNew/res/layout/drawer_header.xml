@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="?attr/colorPrimaryDark"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="12dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <RelativeLayout 
         android:id="@+id/view_header_login"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         >
         <LinearLayout 
 	        android:id="@+id/view_account_header_bg"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
-	        android:layout_centerVertical="true"
+	        android:layout_marginTop="8dp"
 	        >
 	        <ImageView 
 	            android:id="@+id/iv_account_header"
-	            android:layout_width="52dp"
-	            android:layout_height="52dp"
+	            android:layout_width="38dp"
+	            android:layout_height="38dp"
 	            android:layout_gravity="center_vertical"
 	            android:src="@drawable/logo_76"
 	            />
@@ -33,15 +33,14 @@
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_vertical"
 		        android:layout_marginLeft="6dp"
-		        android:textColor="@android:color/white"
-		        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+		        android:textColor="@color/main_bg"
+		        android:textSize="@dimen/LargeTextSize"/>
 	    </LinearLayout>
 	    <LinearLayout 
 	        android:id="@+id/view_account_header_act_code_bg"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="true"
-	        android:paddingBottom="6dp"
+	        android:layout_below="@+id/view_account_header_bg"
 	        android:paddingTop="6dp"
 	        android:orientation="horizontal"
 	        >
@@ -51,16 +50,15 @@
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_vertical"
 		        android:text="激活码："
-		        android:textColor="@android:color/white"
+		        android:textColor="@color/text_black_mid"
 		        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 		    <TextView
 		        android:id="@+id/tv_account_header_act_code"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_vertical"
-		        android:layout_marginLeft="4dp"
 		        android:text="@string/header_hint_str"
-		        android:textColor="@android:color/white"
+		        android:textColor="@color/text_black_mid"
 		        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 	    </LinearLayout>
 	    

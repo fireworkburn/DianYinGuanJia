@@ -1,0 +1,57 @@
+package com.znt.vodbox.activity;
+
+import android.os.Bundle;
+
+import com.znt.vodbox.R;
+import com.znt.vodbox.view.ItemTextView;
+
+public class ShopSettingActivity extends BaseActivity
+{
+
+	private ItemTextView itvName = null;
+	private ItemTextView itvAddr = null;
+	private ItemTextView itvOritation = null;
+	private ItemTextView itvLastOnline = null;
+	private ItemTextView itvEndTime = null;
+	private ItemTextView itvVersion = null;
+	private ItemTextView itvWifiName = null;
+	private ItemTextView itvWifiPwd = null;
+	private ItemTextView itvIp = null;
+	private ItemTextView itvStorage = null;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.view_shop_setting);
+		
+		setCenterString(getResources().getString(R.string.shop_setting));
+		
+		itvName = (ItemTextView)findViewById(R.id.itv_shop_setting_name);
+		itvAddr = (ItemTextView)findViewById(R.id.itv_shop_setting_addr);
+		itvOritation = (ItemTextView)findViewById(R.id.itv_shop_setting_oritation);
+		itvLastOnline = (ItemTextView)findViewById(R.id.itv_shop_setting_last_online_time);
+		itvEndTime = (ItemTextView)findViewById(R.id.itv_shop_setting_dead_time);
+		itvVersion = (ItemTextView)findViewById(R.id.itv_shop_setting_version);
+		itvWifiName = (ItemTextView)findViewById(R.id.itv_shop_setting_wifi_name);
+		itvWifiPwd = (ItemTextView)findViewById(R.id.itv_shop_setting_wifi_pwd);
+		itvIp = (ItemTextView)findViewById(R.id.itv_shop_setting_ip);
+		
+	}
+	
+	private void initViews()
+	{
+		itvName.getFirstView().setText("我的音响");
+		itvAddr.getFirstView().setText("我的音响");
+		itvOritation.getFirstView().setText("我的音响");
+		itvLastOnline.getFirstView().setText("我的音响");
+		itvEndTime.getFirstView().setText("我的音响");
+		itvVersion.getFirstView().setText("我的音响");
+		itvWifiName.getFirstView().setText("我的音响");
+		itvWifiPwd.getFirstView().setText("我的音响");
+		itvIp.getFirstView().setText("我的音响");
+	}
+	
+}

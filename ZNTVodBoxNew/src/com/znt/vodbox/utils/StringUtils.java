@@ -30,7 +30,7 @@ import android.text.style.RelativeSizeSpan;
  * @ClassName: StringUtils 
  * @Description: TODO
  * @author yan.yu 
- * @date 2014-2-11 上午11:54:03  
+ * @date 2014-2-11 涓婂崍11:54:03  
  */
 public class StringUtils
 {
@@ -41,7 +41,7 @@ public class StringUtils
 	private static long STOREUNIT = 1024;
 	
 	/**
-	* @Description: 字符串空判断
+	* @Description: 瀛楃涓茬┖鍒ゆ柇
 	* @param @param value
 	* @param @return   
 	* @return boolean 
@@ -53,7 +53,7 @@ public class StringUtils
 	}
 
 	/**
-	* @Description: 根据tag将字符串分解
+	* @Description: 鏍规嵁tag灏嗗瓧绗︿覆鍒嗚В
 	* @param @param url
 	* @param @return   
 	* @return String[] 
@@ -66,7 +66,7 @@ public class StringUtils
 	}
 
 	/**
-	* @Description: 全角半角转换
+	* @Description: 鍏ㄨ鍗婅杞崲
 	* @param @param input
 	* @param @return   
 	* @return String 
@@ -89,7 +89,7 @@ public class StringUtils
     }  
 	
 	/**
-	* @Description: 字符过滤
+	* @Description: 瀛楃杩囨护
 	* @param @param str
 	* @param @return   
 	* @return String 
@@ -97,16 +97,16 @@ public class StringUtils
 	 */
 	public static String stringFilter(String str) 
 	{
-		str = str.replaceAll("【", "[").replaceAll("】", "]")
-				.replaceAll("！", "!").replaceAll("：", ":");// 替换中文标号
-		String regEx = "[『』]"; // 清除掉特殊字符
+		str = str.replaceAll("銆�", "[").replaceAll("銆�", "]")
+				.replaceAll("锛�", "!").replaceAll("锛�", ":");// 鏇挎崲涓枃鏍囧彿
+		String regEx = "[銆庛�廬"; // 娓呴櫎鎺夌壒娈婂瓧绗�
 		Pattern p = Pattern.compile(regEx);
 		Matcher m = p.matcher(str);
 		return m.replaceAll("").trim();
 	}
 	
 	/**
-    * @Description: 字符串转整形
+    * @Description: 瀛楃涓茶浆鏁村舰
     * @param @param str
     * @param @return   
     * @return int 
@@ -152,7 +152,7 @@ public class StringUtils
 	}
 	
 	/**
-	* @Description: 将字符串转为以endStr结尾
+	* @Description: 灏嗗瓧绗︿覆杞负浠ndStr缁撳熬
 	* @param @param tag  
 	* @param @param endStr
 	* @param @param body
@@ -171,7 +171,7 @@ public class StringUtils
 	}
 	
 	 /**
-	* @Description: Base64加密  依赖commons-codec-1.6.jar包
+	* @Description: Base64鍔犲瘑  渚濊禆commons-codec-1.6.jar鍖�
 	* @param @param plainText
 	* @param @return   
 	* @return String 
@@ -210,7 +210,7 @@ public class StringUtils
 		return s;
 	}
 	/**
-	* @Description: Base64解密 依赖commons-codec-1.6.jar包
+	* @Description: Base64瑙ｅ瘑 渚濊禆commons-codec-1.6.jar鍖�
 	* @param @param encodeStr
 	* @param @return   
 	* @return String 
@@ -235,7 +235,7 @@ public class StringUtils
 	}
 	
 	/**
-    * @Description: 获取百分百
+    * @Description: 鑾峰彇鐧惧垎鐧�
     * @param @param progress
     * @param @param total
     * @param @return   
@@ -248,7 +248,7 @@ public class StringUtils
     	if(f > 0)
     	{
     		BigDecimal bd = new BigDecimal(f);
-    		bd = bd.setScale(2,BigDecimal.ROUND_UP);//取3.1415926小数点后面二位
+    		bd = bd.setScale(2,BigDecimal.ROUND_UP);//鍙�3.1415926灏忔暟鐐瑰悗闈簩浣�
     		float f1 = Float.parseFloat(bd+"");
     		float result = f1*100;
     		int l = (int)result;
@@ -260,7 +260,7 @@ public class StringUtils
     {
     	float f = (float)progress/total;
     	BigDecimal bd = new BigDecimal(f);
-    	bd = bd.setScale(2,BigDecimal.ROUND_UP);//取3.1415926小数点后面二位
+    	bd = bd.setScale(2,BigDecimal.ROUND_UP);//鍙�3.1415926灏忔暟鐐瑰悗闈簩浣�
     	float f1 = Float.parseFloat(bd+"");
     	float result = f1*100;
     	int l = (int)result;
@@ -268,23 +268,23 @@ public class StringUtils
     }
     
     /**
-	* @Description: 设置字符串颜色 如：
-	* exam1:editText2.setText(Html.fromHtml(  "<font color=#E61A6B>红色代码</font> "+ "<i><font color=#1111EE>蓝色斜体代码</font></i>"
-　　　　　　　　　　　　　　　　　　　　　　　　+"<u><i><font color=#1111EE>蓝色斜体加粗体下划线代码</font></i></u>"));
+	* @Description: 璁剧疆瀛楃涓查鑹� 濡傦細
+	* exam1:editText2.setText(Html.fromHtml(  "<font color=#E61A6B>绾㈣壊浠ｇ爜</font> "+ "<i><font color=#1111EE>钃濊壊鏂滀綋浠ｇ爜</font></i>"
+銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�銆�+"<u><i><font color=#1111EE>钃濊壊鏂滀綋鍔犵矖浣撲笅鍒掔嚎浠ｇ爜</font></i></u>"));
 	* exam2:String temp = "name:<br /><font color=\"teal\">hello<small>title<b>activeBalance</b></small></font>"; 
-	* 说明：<br />：表示换行，和“\n”一样。
-			<small>content</small>：表示小字体。
-			<font color=\"teal\">content</font>：设置颜色，teal是青色。
-			<b>content</b>：表示粗体
-			<u>content</u>：表示下横线
-	* @param @param content  内容
-	* @param @param color 颜色
-	* @param @param bold 是否粗体
-	* @param @param italic 是否斜体
-	* @param @param underline 是否下划线
-	* @param @param size 大小  0:small 1: big  
+	* 璇存槑锛�<br />锛氳〃绀烘崲琛岋紝鍜屸�淺n鈥濅竴鏍枫��
+			<small>content</small>锛氳〃绀哄皬瀛椾綋銆�
+			<font color=\"teal\">content</font>锛氳缃鑹诧紝teal鏄潚鑹层��
+			<b>content</b>锛氳〃绀虹矖浣�
+			<u>content</u>锛氳〃绀轰笅妯嚎
+	* @param @param content  鍐呭
+	* @param @param color 棰滆壊
+	* @param @param bold 鏄惁绮椾綋
+	* @param @param italic 鏄惁鏂滀綋
+	* @param @param underline 鏄惁涓嬪垝绾�
+	* @param @param size 澶у皬  0:small 1: big  
 	* @param @return   
-	* @return String  字符串的格式  通过Html.fromHtml(inforStyle)解析后再显示
+	* @return String  瀛楃涓茬殑鏍煎紡  閫氳繃Html.fromHtml(inforStyle)瑙ｆ瀽鍚庡啀鏄剧ず
 	* @throws
 	 */
 	public static  String setTextStyle(String content, String color, boolean bold, boolean italic, boolean underline, int sizeType)
@@ -304,14 +304,14 @@ public class StringUtils
 	}
 	
 	/**
-     * 设置子字符串为红色
+     * 璁剧疆瀛愬瓧绗︿覆涓虹孩鑹�
      * @param text
      * @param colorText
      * @return
      */
     public static SpannableString setColorText(String text, String colorText)
     {
-        //创建一个 SpannableString对象    
+        //鍒涘缓涓�涓� SpannableString瀵硅薄    
         SpannableString msp = new SpannableString(text);
         Pattern p=Pattern.compile(colorText);
         Matcher matcher=p.matcher(text);
@@ -325,7 +325,7 @@ public class StringUtils
     }
     
     /**
-     * 设置子字符串为红色和字体大小
+     * 璁剧疆瀛愬瓧绗︿覆涓虹孩鑹插拰瀛椾綋澶у皬
      * @param text
      * @param colorText
      * @param colorTextSize
@@ -333,7 +333,7 @@ public class StringUtils
      */
     public static SpannableString setColorText(String text, String colorText, float colorTextSize)
     {
-        //创建一个 SpannableString对象    
+        //鍒涘缓涓�涓� SpannableString瀵硅薄    
         SpannableString msp = new SpannableString(text);
         Pattern p = Pattern.compile(colorText);
         Matcher matcher = p.matcher(text);
@@ -350,7 +350,7 @@ public class StringUtils
         return msp;
     }
     /**
-    * @Description: 设置指定字符串颜色和大小
+    * @Description: 璁剧疆鎸囧畾瀛楃涓查鑹插拰澶у皬
     * @param @param text
     * @param @param colorText
     * @param @param colorTextSize
@@ -361,7 +361,7 @@ public class StringUtils
      */
     public static SpannableString setColorText(String text, String colorText, float colorTextSize, int color)
     {
-    	//创建一个 SpannableString对象    
+    	//鍒涘缓涓�涓� SpannableString瀵硅薄    
     	SpannableString msp = new SpannableString(text);
     	Pattern p = Pattern.compile(colorText);
     	Matcher matcher = p.matcher(text);
@@ -390,7 +390,7 @@ public class StringUtils
 	}
 	
 	/**
-    * @Description: 获取时间格式
+    * @Description: 鑾峰彇鏃堕棿鏍煎紡
     * @param @param time
     * @param @return   
     * @return String 
@@ -423,7 +423,7 @@ public class StringUtils
     }
     
     /**
-	* @Description: 获取磁盘空间大小格式
+	* @Description: 鑾峰彇纾佺洏绌洪棿澶у皬鏍煎紡
 	* @param @param size
 	* @param @return   
 	* @return String 
@@ -462,7 +462,7 @@ public class StringUtils
     }
     
     /**
-	  * 判断是否是邮箱
+	  * 鍒ゆ柇鏄惁鏄偖绠�
 	  * @param param
 	  * @return
 	  */
@@ -480,7 +480,7 @@ public class StringUtils
 	 } 
 	 
 	 /**
-	 * 验证手机格式
+	 * 楠岃瘉鎵嬫満鏍煎紡
 	* @Description: TODO
 	* @param @param mobiles
 	* @param @return   
@@ -490,14 +490,14 @@ public class StringUtils
 	public static boolean isMobileNO(String mobiles) 
 	{
 		/*
-		移动：134、135、136、137、138、139、150、151、157(TD)、158、159、187、188
-		联通：130、131、132、152、155、156、185、186
-		电信：133、153、180、189、（1349卫通）
-		总结起来就是第一位必定为1，第二位必定为3或5或8，其他位置的可以为0-9
+		绉诲姩锛�134銆�135銆�136銆�137銆�138銆�139銆�150銆�151銆�157(TD)銆�158銆�159銆�187銆�188
+		鑱旈�氾細130銆�131銆�132銆�152銆�155銆�156銆�185銆�186
+		鐢典俊锛�133銆�153銆�180銆�189銆侊紙1349鍗�氾級
+		鎬荤粨璧锋潵灏辨槸绗竴浣嶅繀瀹氫负1锛岀浜屼綅蹇呭畾涓�3鎴�5鎴�8锛屽叾浠栦綅缃殑鍙互涓�0-9
 		*/
 		if(mobiles.startsWith("400"))
 			return true;
-		String telRegex = "[1][358769]\\d{9}";//"[1]"代表第1位为数字1，"[358]"代表第二位可以为3、5、8中的一个，"\\d{9}"代表后面是可以是0～9的数字，有9位。
+		String telRegex = "[1][358769]\\d{9}";//"[1]"浠ｈ〃绗�1浣嶄负鏁板瓧1锛�"[358]"浠ｈ〃绗簩浣嶅彲浠ヤ负3銆�5銆�8涓殑涓�涓紝"\\d{9}"浠ｈ〃鍚庨潰鏄彲浠ユ槸0锝�9鐨勬暟瀛楋紝鏈�9浣嶃��
 		if (TextUtils.isEmpty(mobiles)) 
 			return false;
 		else 
@@ -506,7 +506,7 @@ public class StringUtils
 	 
 	
 	/** 
-	   *  获取时间戳
+	   *  鑾峰彇鏃堕棿鎴�
 	   * @return 
 	   */ 
 	public static String generateTimeStamp() 
@@ -514,7 +514,7 @@ public class StringUtils
 		return String.valueOf(System.currentTimeMillis() / 1000); 
 	} 
 	  /** 
-	   * 单次产生值
+	   * 鍗曟浜х敓鍊�
 	   * @param is32 
 	   *            32 
 	   * @return 
@@ -586,7 +586,7 @@ public class StringUtils
 	}
 	
 	/**
-	 * 播放时间转换
+	 * 鎾斁鏃堕棿杞崲
 	 */
 	public static String durationToTime(int time) {
 
@@ -655,24 +655,24 @@ public class StringUtils
 		int minute = 0;
 		int second = 0;
 		if (time <= 0)
-			return "00小时00分00秒";
+			return "00灏忔椂00鍒�00绉�";
 		else 
 		{
 			minute = time / 60;
 			if (minute < 60) 
 			{
 				second = time % 60;
-				timeStr = "00小时" + unitFormat(minute) + "分" + unitFormat(second)+"秒";
+				timeStr = "00灏忔椂" + unitFormat(minute) + "鍒�" + unitFormat(second)+"绉�";
 			} 
 			else
 			{
 				hour = minute / 60;
 				if (hour > 99)
-					return "99小时59分59秒";
+					return "99灏忔椂59鍒�59绉�";
 				minute = minute % 60;
 				second = time - hour * 3600 - minute * 60;
-				timeStr = unitFormat(hour) + "小时" + unitFormat(minute) + "分"
-						+ unitFormat(second) +"秒";
+				timeStr = unitFormat(hour) + "灏忔椂" + unitFormat(minute) + "鍒�"
+						+ unitFormat(second) +"绉�";
 			}
 		}
 		return timeStr;
@@ -697,7 +697,7 @@ public class StringUtils
 	 * Convert time from "00:00:00" to seconds.
 	 * 
 	 * @param length
-	 *            00:00:00或者00:00
+	 *            00:00:00鎴栬��00:00
 	 * @return The length in seconds.
 	 */
 	public static int getIntLength(String length) 
@@ -803,27 +803,32 @@ public class StringUtils
 	}
 	
 	/** 
-	* 实现文本复制功能 
+	* 瀹炵幇鏂囨湰澶嶅埗鍔熻兘 
 	* add by wangqianzhou 
 	* @param content 
 	*/  
 	public static void copy(String content, Context context)  
 	{  
-		// 得到剪贴板管理器  
+		// 寰楀埌鍓创鏉跨鐞嗗櫒  
 		ClipboardManager cmb = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);  
 		cmb.setText(content.trim());  
 	}  
 	/** 
-	* 实现粘贴功能 
+	* 瀹炵幇绮樿创鍔熻兘 
 	* add by wangqianzhou 
 	* @param context 
 	* @return 
 	*/  
 	public static String paste(Context context)  
 	{  
-		// 得到剪贴板管理器  
+		// 寰楀埌鍓创鏉跨鐞嗗櫒  
 		ClipboardManager cmb = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);  
 		return cmb.getText().toString().trim();  
 	}  
+	
+	public static String getStringById(Context context, int id)
+	{
+		return context.getResources().getString(id);
+	}
 }
  

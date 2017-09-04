@@ -1,0 +1,80 @@
+package com.znt.vodbox.activity;
+
+import android.os.Bundle;
+
+import com.znt.vodbox.R;
+import com.znt.vodbox.view.ItemTextView;
+
+public class ShopSettingActivity extends BaseActivity
+{
+
+	private ItemTextView itvName = null;
+	private ItemTextView itvAddr = null;
+	private ItemTextView itvOritation = null;
+	private ItemTextView itvLastOnline = null;
+	private ItemTextView itvEndTime = null;
+	private ItemTextView itvVersion = null;
+	private ItemTextView itvWifiName = null;
+	private ItemTextView itvWifiPwd = null;
+	private ItemTextView itvIp = null;
+	private ItemTextView itvStorage = null;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.view_shop_setting);
+		
+		setCenterString(getResources().getString(R.string.shop_setting));
+		
+		itvName = (ItemTextView)findViewById(R.id.itv_shop_setting_name);
+		itvAddr = (ItemTextView)findViewById(R.id.itv_shop_setting_addr);
+		itvOritation = (ItemTextView)findViewById(R.id.itv_shop_setting_oritation);
+		itvLastOnline = (ItemTextView)findViewById(R.id.itv_shop_setting_last_online_time);
+		itvEndTime = (ItemTextView)findViewById(R.id.itv_shop_setting_dead_time);
+		itvVersion = (ItemTextView)findViewById(R.id.itv_shop_setting_version);
+		itvWifiName = (ItemTextView)findViewById(R.id.itv_shop_setting_wifi_name);
+		itvWifiPwd = (ItemTextView)findViewById(R.id.itv_shop_setting_wifi_pwd);
+		itvIp = (ItemTextView)findViewById(R.id.itv_shop_setting_ip);
+		itvStorage = (ItemTextView)findViewById(R.id.itv_shop_setting_storage);
+		
+		initViews();
+	}
+	
+	private void initViews()
+	{
+		itvName.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_name));
+		itvAddr.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_addr));
+		itvOritation.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_oritation));
+		itvLastOnline.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_last_online_time));
+		itvEndTime.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_dead_time));
+		itvVersion.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_version));
+		itvWifiName.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_wifi_name));
+		itvWifiPwd.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_wifi_pwd));
+		itvIp.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_ip));
+		itvStorage.getFirstView().setText(getResources().getString(R.string.itv_shop_setting_storage));
+		
+		
+		itvName.showMoreButton(true);
+		itvAddr.showMoreButton(true);
+		itvOritation.showMoreButton(true);
+		
+		itvName.showIocn();
+		itvAddr.showIocn();
+		itvOritation.showIocn();
+		itvLastOnline.showIocn();
+		itvEndTime.showIocn();
+		itvVersion.showIocn();
+		itvWifiName.showIocn();
+		itvWifiPwd.showIocn();
+		itvIp.showIocn();
+		itvStorage.showIocn();
+		
+		itvName.setOnClick(this);
+		itvAddr.setOnClick(this);
+		itvOritation.setOnClick(this);
+	}
+	
+}

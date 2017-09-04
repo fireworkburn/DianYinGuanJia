@@ -36,9 +36,8 @@
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:layout_gravity="center_vertical"
-			    android:textColor="@color/colorPrimaryDark"
-			    android:textStyle="bold"
-			    android:textSize="@dimen/LargeTextSize"
+			    android:textColor="@color/text_black_on"
+			    android:textSize="@dimen/title_text_size"
 			    />
         </LinearLayout>
         
@@ -47,7 +46,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="12dp"
+            android:paddingLeft="30dp"
 	        android:paddingTop="8dp"
 	        android:paddingRight="12dp"
 	        android:paddingBottom="12dp"
@@ -66,8 +65,9 @@
                 android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:singleLine="true"
+			    android:layout_marginTop="4dp"
 			    android:textSize="@dimen/SmallTextSize"
-			    android:textColor="@color/text_black_mid"
+			    android:textColor="@color/text_black_off"
                 />
             
         </LinearLayout>

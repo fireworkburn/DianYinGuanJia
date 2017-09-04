@@ -61,11 +61,12 @@
 			      android:progressDrawable="@drawable/scrubber_progress_horizontal_holo_dark"
 			      android:thumb="@drawable/scrubber_control_selector_holo"
 			      android:layout_width="match_parent"
-			      android:layout_height="10dp"
-			      android:layout_marginTop="10dp"
+			      android:layout_height="20dip"
+			      android:layout_marginTop="6dp"
 			      android:focusable="true"
 			      android:thumbOffset="0dp" 
-			      android:padding="0dp"
+			      android:paddingTop="6dp" 
+			      android:paddingBottom="6dp"
 			      />
         </LinearLayout>
         

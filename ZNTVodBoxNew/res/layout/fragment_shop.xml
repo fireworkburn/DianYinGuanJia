@@ -17,8 +17,8 @@
             android:id="@+id/linearLayout1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="6dip"
-            android:paddingTop="6dip" >
+            android:paddingBottom="12dip"
+            android:paddingTop="12dip" >
 
             <TextView
                 android:id="@+id/tv_tab_1"
@@ -27,7 +27,7 @@
                 android:layout_weight="1.0"
                 android:gravity="center"
                 android:text="全部店铺"
-                android:textColor="@color/text_blue_off"
+                android:textColor="@color/text_blue_on"
                 android:textSize="14sp" />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="2dip"
                 android:scaleType="matrix"
-                android:src="@color/text_blue_off" />
+                android:src="@color/colorPrimaryDark" />
         </LinearLayout>
     </LinearLayout>
 

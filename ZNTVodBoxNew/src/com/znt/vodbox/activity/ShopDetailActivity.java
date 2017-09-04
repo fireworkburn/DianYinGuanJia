@@ -13,6 +13,22 @@ package com.znt.vodbox.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
+
 import com.znt.diange.mina.cmd.DeviceInfor;
 import com.znt.diange.mina.entity.MediaInfor;
 import com.znt.vodbox.R;
@@ -32,22 +48,6 @@ import com.znt.vodbox.utils.ViewUtils;
 import com.znt.vodbox.view.listview.LJListView;
 import com.znt.vodbox.view.listview.LJListView.IXListViewListener;
 
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.text.TextUtils;
-import android.view.Display;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView;
-
 /** 
  * @ClassName: ShopDetailActivity 
  * @Description: TODO
@@ -58,22 +58,17 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 {
 
 	private LJListView listView = null;
-	private TextView tvApplication = null;
-	private TextView tvClear = null;
-	private TextView tvAdd = null;
 	
 	private View viewHeader = null;
-	private TextView tvShopName = null;
-	private TextView tvShopAddr = null;
 	private TextView tvPlaySong = null;
 	private TextView tvSongCount = null;
-	private TextView tvSongPush = null;
-	private TextView tvRecommand = null;
 	private TextView tvVolume = null;
-	private TextView viewVideoWhirl = null;
-	private TextView tvEndTime = null;
-	private TextView tvIp = null;
-	private View viewAddr = null;
+	private TextView tvStatus = null;
+	
+	private View viewPush = null;
+	private View viewVolum = null;
+	private View viewPlan = null;
+	private View viewRecommand = null;
 	
 	private HttpFactory httpFactory = null;
 	private MusicAdapter adapter = null;
@@ -125,23 +120,6 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 				isRunning = false;
 				onLoad(0);
 			}
-			else if(msg.what == HttpMsg.UPDATE_SPEAKER_INFOR_START)
-			{
-				showProgressDialog(getActivity(), getString(R.string.update_speaker_infor_doing));
-			}
-			else if(msg.what == HttpMsg.UPDATE_SPEAKER_INFOR_SUCCESS)
-			{
-				dismissDialog();
-				showToast(R.string.update_speaker_infor_success);
-				tvShopAddr.setText(deviceInfor.getAddr());
-				if(!TextUtils.isEmpty(shopNewName))
-					tvShopName.setText(shopNewName);
-			}
-			else if(msg.what == HttpMsg.UPDATE_SPEAKER_INFOR_FAIL)
-			{
-				showToast(R.string.update_speaker_infor_fail);
-				dismissDialog();
-			}
 		};
 	};
 	
@@ -157,36 +135,28 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 		setContentView(R.layout.activity_shop_detail);
 		
 		showTopView(true);
-		setRightText(getResources().getString(R.string.nav_main_plans));
-		setRightTopIcon(R.drawable.icon_plan_item);
+		//setRightText(getResources().getString(R.string.nav_main_plans));
+		showRightImageView(true);
+		setRightTopIcon(R.drawable.icon_top_right_more);
 		
 		viewHeader = LayoutInflater.from(getActivity()).inflate(R.layout.view_shop_detail_header, null);
-		tvShopName = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_name);
-		tvShopAddr = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_addr);
 		tvPlaySong = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_song);
 		tvSongCount = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_song_count);
-		tvSongPush = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_song_push);
-		tvRecommand = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_song_recommand);
+		tvStatus = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_status);
 		tvVolume = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_volume);
-		tvEndTime = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_end_time);
-		tvIp = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_ip);
-		viewAddr = viewHeader.findViewById(R.id.view_shop_detail_header_addr);
-		viewVideoWhirl = (TextView)viewHeader.findViewById(R.id.tv_shop_detail_header_videowhirl);
 		
-		tvApplication = (TextView)findViewById(R.id.tv_shop_music_bottom_application);
-		tvClear = (TextView)findViewById(R.id.tv_shop_music_bottom_clear);
-		tvAdd = (TextView)findViewById(R.id.tv_shop_music_bottom_add);
+		viewPush = viewHeader.findViewById(R.id.view_shop_opr_push);
+		viewVolum = viewHeader.findViewById(R.id.view_shop_opr_volum);
+		viewPlan = viewHeader.findViewById(R.id.view_shop_opr_plan);
+		viewRecommand = viewHeader.findViewById(R.id.view_shop_opr_recomand);
+		
 		listView = (LJListView)findViewById(R.id.ptrl_shop_music);
 		
-		tvApplication.setOnClickListener(this);
-		tvClear.setOnClickListener(this);
-		tvAdd.setOnClickListener(this);
-		tvSongPush.setOnClickListener(this);
-		tvRecommand.setOnClickListener(this);
 		tvVolume.setOnClickListener(this);
-		viewVideoWhirl.setOnClickListener(this);
-		viewAddr.setOnClickListener(this);
-		tvShopName.setOnClickListener(this);
+		viewPush.setOnClickListener(this);
+		viewVolum.setOnClickListener(this);
+		viewPlan.setOnClickListener(this);
+		viewRecommand.setOnClickListener(this);
 		
 		listView.addHeader(viewHeader);
 		listView.getListView().setDivider(getResources().getDrawable(R.color.transparent));
@@ -212,17 +182,6 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 		
 		listView.onFresh();
 		
-		if(!getLocalData().isNormalUser())
-		{
-			tvSongPush.setVisibility(View.VISIBLE);
-			tvVolume.setVisibility(View.VISIBLE);
-		}
-		else
-		{
-			tvSongPush.setVisibility(View.GONE);
-			tvVolume.setVisibility(View.GONE);
-		}
-		
 		getRightView().setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -230,75 +189,37 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 				// TODO Auto-generated method stub
 				
 				Bundle bundle = new Bundle();
-				bundle.putString("terminalId", deviceInfor.getCode());
-				bundle.putString("terminalName", deviceInfor.getName());
-				ViewUtils.startActivity(getActivity(), PlanListActivity.class, bundle);
+				bundle.putSerializable("DeviceInfor", deviceInfor);
+				ViewUtils.startActivity(getActivity(), ShopSettingActivity.class, bundle);
 			}
 		});
 		
 	}
 	
-	private String getVideoWhirl(String videoWhirl)
-	{
-		if(videoWhirl.equals("0"))
-		{
-			return getResources().getString(R.string.video_oritation_1);
-		}
-		else if(videoWhirl.equals("1"))
-		{
-			return getResources().getString(R.string.video_oritation_2);
-		}
-		else if(videoWhirl.equals("2"))
-		{
-			return getResources().getString(R.string.video_oritation_3);
-		}
-		else if(videoWhirl.equals("3"))
-		{
-			return getResources().getString(R.string.video_oritation_4);
-		}
-		return getResources().getString(R.string.screen_oritiontion)+videoWhirl;
-	}
-	
-	
 	private void initHeaderData()
 	{
 		setCenterString(deviceInfor.getName());
-		tvVolume.setText(getResources().getString(R.string.volume) + "(" + deviceInfor.getVolume() + " / 15)");
-		viewVideoWhirl.setText(getResources().getString(R.string.screen_oritiontion) + "(" + getVideoWhirl(deviceInfor.getVideoWhirl()) + ")");
-		tvShopName.setText(deviceInfor.getName());
-		if(!Constant.isInnerVersion)
-			tvIp.setVisibility(View.GONE);
-		else
-		{
-			tvIp.setVisibility(View.VISIBLE);
-			tvIp.setText(deviceInfor.getNetInfo() + "  " + deviceInfor.getWifiName() + "/" + deviceInfor.getWifiPwd());
-		}
-			
-		tvShopAddr.setText(deviceInfor.getAddr());
+		tvVolume.setText(getResources().getString(R.string.cur_volume) + "(" + deviceInfor.getVolume() + " / 15)");
 		if(!TextUtils.isEmpty(deviceInfor.getCurPlaySong()))
 		{
 			if(deviceInfor.getPlayingSongType().equals("0"))
-				tvPlaySong.setText("当前播放歌曲:" + deviceInfor.getCurPlaySong());
+				tvPlaySong.setText(getResources().getString(R.string.mucis_current_play) + deviceInfor.getCurPlaySong());
 			else if(deviceInfor.getPlayingSongType().equals("1"))
-				tvPlaySong.setText("当前点播歌曲:" + deviceInfor.getCurPlaySong());
+				tvPlaySong.setText(getResources().getString(R.string.mucis_current_push) + deviceInfor.getCurPlaySong());
 		}
 		else
-			tvPlaySong.setText(getResources().getString(R.string.offline));
+			tvPlaySong.setText(getResources().getString(R.string.dev_detail_no_play));
 		tvSongCount.setText(getResources().getString(R.string.cur_play_list)+"(" + deviceInfor.getMusicCount() + ")");
 		
-		if(!TextUtils.isEmpty(deviceInfor.getEndTime()))
+		if(deviceInfor.isOnline())
 		{
-			long endTime = Long.parseLong(deviceInfor.getEndTime());
-			if(endTime > 0 && endTime < System.currentTimeMillis())
-			{
-				tvEndTime.setText(getResources().getString(R.string.over_time_end));
-				tvEndTime.setTextColor(getResources().getColor(R.color.red));
-			}
-			else
-			{
-				tvEndTime.setText(getResources().getString(R.string.over_time) + ":" + DateUtils.getDateFromLong(endTime));
-				tvEndTime.setTextColor(getResources().getColor(R.color.text_black_mid));
-			}
+			tvStatus.setText(getResources().getString(R.string.status_off_online));
+			tvStatus.setTextColor(getResources().getColor(R.color.red));
+		}
+		else
+		{
+			tvStatus.setText(getResources().getString(R.string.status_off_line));
+			tvStatus.setTextColor(getResources().getColor(R.color.text_black_mid));
 		}
 		
 	}
@@ -397,48 +318,29 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 	@Override
 	public void onClick(View v) 
 	{
-		// TODO Auto-generated method stub
-		if(v == tvApplication)
+		if(v == viewPush)
 		{
-			
+			Bundle bundle = new Bundle();
+			bundle.putString("terminalId", deviceInfor.getCode());
+			ViewUtils.startActivity(getActivity(), SearchMusicActivity.class, bundle);
 		}
-		else if(v == tvClear)
+		else if(v == viewVolum)
 		{
-			
+			showVolumeDialog(deviceInfor);
 		}
-		else if(v == tvRecommand)
+		else if(v == viewPlan)
+		{
+			Bundle bundle = new Bundle();
+			bundle.putString("terminalId", deviceInfor.getCode());
+			bundle.putString("terminalName", deviceInfor.getName());
+			ViewUtils.startActivity(getActivity(), PlanListActivity.class, bundle);
+		}
+		else if(v == viewRecommand)
 		{
 			Bundle bundle = new Bundle();
 			bundle.putString("terminalId", deviceInfor.getCode());
 			bundle.putSerializable("MusicEditType", MusicEditType.DeleteAdd);
 			ViewUtils.startActivity(getActivity(), AlbumMusicActivity.class, bundle);
-		}
-		else if(v == tvSongPush)
-		{
-			Bundle bundle = new Bundle();
-			bundle.putString("terminalId", deviceInfor.getCode());
-			ViewUtils.startActivity(getActivity(), SearchMusicActivity.class, bundle);
-		}
-		else if(v == tvVolume)
-		{
-			showVolumeDialog(deviceInfor);
-		}
-		else if(v == viewVideoWhirl)
-		{
-			showVideoWhirlDialog(deviceInfor);
-		}
-		else if(v == viewAddr)
-		{
-			ViewUtils.startActivity(getActivity(), LocationActivity.class, null, 1);
-		}
-		else if(v == tvAdd)
-		{
-			Bundle bundle = new Bundle();
-			ViewUtils.startActivity(getActivity(), SearchMusicActivity.class, bundle);
-		}
-		else if(v == tvShopName)
-		{
-			showEditNameDialog();
 		}
 	}
 	private void showPlayDialog(final MediaInfor infor)
@@ -494,7 +396,7 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 			{
 				// TODO Auto-generated method stub
 				isVolumeUpdated = playDialog.isVolumeUpdated();
-				tvVolume.setText(getResources().getString(R.string.volume) + "(" + playDialog.getCurVolume() + " / 15)");
+				tvVolume.setText(getResources().getString(R.string.cur_volume) + "(" + playDialog.getCurVolume() + " / 15)");
 				deviceInfor.setVolume(playDialog.getCurVolume() + "");
 			}
 		});
@@ -504,76 +406,6 @@ public class ShopDetailActivity extends BaseActivity implements IXListViewListen
 		lp.width = (int)(display.getWidth()); //璁剧疆瀹藉害
 		lp.height = (int)(display.getHeight()); //璁剧疆楂樺害
 		playDialog.getWindow().setAttributes(lp);
-	}
-	private void showVideoWhirlDialog(final DeviceInfor devInfor)
-	{
-		final VideoDirectionDialog videoDirectionDialog = new VideoDirectionDialog(getActivity());
-	
-		//playDialog.updateProgress("00:02:18 / 00:05:12");
-		if(videoDirectionDialog.isShowing())
-			videoDirectionDialog.dismiss();
-		videoDirectionDialog.showDialog(deviceInfor.getVideoWhirl(), deviceInfor.getCode());
-		videoDirectionDialog.setOnDismissListener(new OnDismissListener()
-		{
-			@Override
-			public void onDismiss(DialogInterface arg0) 
-			{
-				// TODO Auto-generated method stub
-				if(!TextUtils.isEmpty(videoDirectionDialog.getCurDerection()))
-				{
-					deviceInfor.setVideoWhirl(videoDirectionDialog.getCurDerection());
-					viewVideoWhirl.setText(getResources().getString(R.string.screen_oritiontion) + "(" + getVideoWhirl(deviceInfor.getVideoWhirl()) + ")");
-				}
-				//
-			}
-		});
-		WindowManager windowManager = ((Activity) getActivity()).getWindowManager();
-		Display display = windowManager.getDefaultDisplay();
-		WindowManager.LayoutParams lp = videoDirectionDialog.getWindow().getAttributes();
-		lp.width = (int)(display.getWidth()); //璁剧疆瀹藉害
-		lp.height = (int)(display.getHeight()); //璁剧疆楂樺害
-		videoDirectionDialog.getWindow().setAttributes(lp);
-	}
-	
-	private EditNameDialog dialog = null;
-	private void showEditNameDialog()
-	{
-		if(dialog == null || dialog.isDismissed())
-			dialog = new EditNameDialog(getActivity(), "请输入店铺名称");
-		//playDialog.updateProgress("00:02:18 / 00:05:12");
-		if(dialog.isShowing())
-			dialog.dismiss();
-		dialog.show();
-		final String oldName = tvShopName.getText().toString();
-		dialog.setInfor(oldName);
-		dialog.setOnClickListener(new OnClickListener() 
-		{
-			@Override
-			public void onClick(View arg0)
-			{
-				// TODO Auto-generated method stub
-				if(TextUtils.isEmpty(dialog.getContent()))
-				{
-					showToast(getResources().getString(R.string.please_input_content));
-					return;
-				}
-				if(dialog.getContent().equals(oldName))
-				{
-					showToast(getResources().getString(R.string.name_not_change));
-					return;
-				}
-				shopNewName = dialog.getContent();
-				httpFactory.updateSpeakerName(dialog.getContent(), deviceInfor.getCode());
-				dialog.dismiss();
-			}
-		});
-		
-		WindowManager windowManager = getActivity().getWindowManager();
-		Display display = windowManager.getDefaultDisplay();
-		WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-		lp.width = (int)(display.getWidth()); //璁剧疆瀹藉害
-		lp.height = (int)(display.getHeight()); //璁剧疆楂樺害
-		dialog.getWindow().setAttributes(lp);
 	}
 }
  

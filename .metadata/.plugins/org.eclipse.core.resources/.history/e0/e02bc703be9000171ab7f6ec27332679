@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/planet_group_0"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_top_first_fragment"
+            android:icon="@drawable/icon_add_devices"
+            android:title="@string/nav_add_shop" />
+        <!-- <item
+            android:id="@+id/nav_top_second_fragment"
+            android:icon="@drawable/qrcode_scan"
+            android:title="@string/nav_main_plans" /> -->
+
+    </group>
+    <group
+        android:id="@+id/planet_group_1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_first_fragment"
+            android:icon="@drawable/icon_indicator_shop_off"
+            android:title="@string/nav_my_shops" />
+        <item
+            android:id="@+id/nav_second_fragment"
+            android:icon="@drawable/icon_plan"
+            android:title="@string/nav_main_plans" />
+        <item
+            android:id="@+id/nav_third_fragment"
+            android:icon="@drawable/icon_my_albums"
+            android:title="@string/nav_my_albums" />
+
+        <item
+            android:id="@+id/nav_fourth_fragment"
+            android:icon="@drawable/icon_system_albums"
+            android:title="@string/nav_system_albums" />
+
+    </group>
+	
+    <group
+        android:id="@+id/planet_group_2"
+        android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_sub_first_fragment"
+            android:icon="@drawable/icon_apply_online"
+            android:title="@string/apply_online" />
+        <item
+            android:id="@+id/nav_sub_second_fragment"
+            android:icon="@drawable/icon_system_des"
+            android:title="@string/system_des" />
+        <item
+            android:id="@+id/nav_sub_third_fragment"
+            android:icon="@drawable/icon_help"
+            android:title="@string/help" />
+    </group>
+    <group
+        android:id="@+id/planet_group_3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_sys_first_fragment"
+            android:icon="@drawable/icon_update"
+            android:title="@string/update_check" />
+        <item
+            android:id="@+id/nav_sys_second_fragment"
+            android:icon="@drawable/icon_about"
+            android:title="@string/about" />
+    </group>
+</menu>

@@ -13,6 +13,16 @@ package com.znt.vodbox.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
+
 import com.znt.vodbox.R;
 import com.znt.vodbox.adapter.Action;
 import com.znt.vodbox.adapter.PlanListAdapter;
@@ -21,27 +31,11 @@ import com.znt.vodbox.entity.SubPlanInfor;
 import com.znt.vodbox.factory.HttpFactory;
 import com.znt.vodbox.http.HttpMsg;
 import com.znt.vodbox.http.HttpRequestID;
-import com.znt.vodbox.http.HttpResult;
 import com.znt.vodbox.mvp.p.GetPlanListPresenter;
 import com.znt.vodbox.mvp.v.IGetPlanListView;
 import com.znt.vodbox.utils.ViewUtils;
-import com.znt.vodbox.view.HintView.OnHintListener;
 import com.znt.vodbox.view.ISFooterView;
 import com.znt.vodbox.view.RefreshRecyclerView;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 /** 
  * @ClassName: PlanActivity 
@@ -74,6 +68,8 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 	private String status = "0";
 	private String userId = "";
 	private String userName = "";
+	private boolean isRunning = false;
+	private boolean isClickLoad = false;
 	private Handler handler = new Handler()
 	{
 		public void handleMessage(android.os.Message msg) 
@@ -176,6 +172,7 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 			{
 				// TODO Auto-generated method stub
 				getCurPlans();
+				isClickLoad = true;
 			}
 		});
 		
@@ -272,11 +269,15 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 			public void onClick(View arg0) 
 			{
 				// TODO Auto-generated method stub
+				if(isRunning)
+					return;
 				showLeftView();
 				planList.clear();
 				adapter.notifyDataSetChanged();
 				pageNo = 1;
 				status = "0";
+				isClickLoad = true;
+				getCurPlans();
 			}
 		});
 		viewRight.setOnClickListener(new OnClickListener() 
@@ -285,11 +286,15 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 			public void onClick(View arg0) 
 			{
 				// TODO Auto-generated method stub
+				if(isRunning)
+					return;
 				showRightView();
 				planList.clear();
 				adapter.notifyDataSetChanged();
 				pageNo = 1;
 				status = "1";
+				isClickLoad = true;
+				getCurPlans();
 			}
 		});
 		getCurPlans();
@@ -347,12 +352,12 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 		}
 		if(requestCode == 2)
 		{
-			/*planInfor = (PlanInfor)data.getSerializableExtra("PlanInfor");
+			if(data != null)
+				planInfor = (PlanInfor)data.getSerializableExtra("PlanInfor");
 			subPlanList.clear();
 			showCurPlanView();
-			Constant.isPlanUpdated = true;*/
 			pageNo = 1;
-			//listView.onFresh();
+			getCurPlans();
 		}
 		
 		// TODO Auto-generated method stub
@@ -382,23 +387,36 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 	@Override
 	public void requestRunning(int requestId) {
 		// TODO Auto-generated method stub
-		
+		if(isClickLoad)
+			showLoadingView(true);
+		isRunning = true;
 	}
 	@Override
 	public void requestFailed(int requestId, String error) {
 		// TODO Auto-generated method stub
-		
+		showLoadingView(false);
+		isRunning = false;
+		isClickLoad = false;
 	}
 	@Override
 	public void requestSuccess(int requestId, List<PlanInfor> tempList, int total) 
 	{
 		// TODO Auto-generated method stub
+		isClickLoad = false;
+		showLoadingView(false);
+		isRunning = false;
 		if(requestId == HttpRequestID.GET_SPEAKER_PLAN_LIST)
 		{
 			if(total > 0)
 			{
 				if(TextUtils.isEmpty(userId))
-					setCenterString("我的播放计划(" + total + ")");
+				{
+					if(status.equals("0"))
+						setCenterString("当前计划(" + total + ")");
+					else
+						setCenterString("历史计划(" + total + ")");
+				}
+					
 				else
 					setCenterString("区域计划(" + total + ")");
 			}

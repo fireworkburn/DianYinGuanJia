@@ -644,6 +644,10 @@ public class AccountActivity extends BaseActivity implements OnClickListener
 		showUnLoginView();
 		MyApplication.isLogin = false;
 		ivHead.setImageResource(R.drawable.logo);
+		
+		Bundle bunlde = new Bundle();
+		bunlde.putString("LoginType", "1");
+		ViewUtils.startActivity(getActivity(), LoginActivity.class, bunlde);
 	}
 	
 	private void initSMSSDK() 

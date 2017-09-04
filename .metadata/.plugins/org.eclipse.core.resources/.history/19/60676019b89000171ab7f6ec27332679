@@ -1,0 +1,50 @@
+package com.znt.vodbox.view;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.znt.vodbox.R;
+
+public class ShopListHeaderView extends RelativeLayout
+{
+	private Context context = null;
+	
+	public ShopListHeaderView(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+		initViews(context);
+	}
+	public ShopListHeaderView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		// TODO Auto-generated constructor stub
+		initViews(context);
+	}
+	public ShopListHeaderView(Context context, AttributeSet attrs,
+			int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		initViews(context);
+		// TODO Auto-generated constructor stub
+	}
+	public ShopListHeaderView(Context context, AttributeSet attrs,
+			int defStyleAttr, int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
+		initViews(context);
+		// TODO Auto-generated constructor stub
+	}
+
+	private void initViews(Context context)
+	{
+		this.context = context;
+		
+		View.inflate(context, R.layout.is_news_footer, ISFooterView.this);
+		
+		bgView = this.findViewById(R.id.is_news_footer_bg);
+		tvHint = (TextView)this.findViewById(R.id.tv_is_news_footer_hint);
+		pb = (ProgressBar)this.findViewById(R.id.is_news_footer_progress);
+		
+	}
+}

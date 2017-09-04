@@ -1,0 +1,79 @@
+package com.example.cyandev.androidplayground;
+
+import android.content.ContentResolver;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.telecom.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+public class ScrollingActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_scrolling);
+
+        ContentResolver cr = this.getContentResolver();
+  	  try {
+  	   if (Settings.System.getInt(cr, Settings.System.WIFI_USE_STATIC_IP)==0){
+  	    Log.d("Demo", "No use Static IP!");
+  	   }
+  	   else{
+  	    Log.d("Demo", "use Static IP and Change IP to 192.168.1.123!");
+  	    Settings.System.putString(cr, Settings.System.WIFI_STATIC_IP, "192.168.1.125");
+  	    Settings.System.putString(cr, Settings.System.WIFI_STATIC_GATEWAY, "192.168.1.1");
+  	    Settings.System.putString(cr, Settings.System.WIFI_STATIC_NETMASK, "255.255.255.0");
+  	    Settings.System.putString(cr, Settings.System.WIFI_STATIC_DNS1, "202.103.24.68");
+  	    Settings.System.putString(cr, Settings.System.WIFI_STATIC_DNS2, "202.103.0.68");
+  	   }
+  	  } catch (SettingNotFoundException e) {
+  	   // TODO Auto-generated catch block
+  	   e.printStackTrace();
+  	  }
+        
+        recyclerView = (RecyclerView) findViewById(R.id.rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(ScrollingActivity.this));
+        recyclerView.setAdapter(new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new ViewHolder(getLayoutInflater().inflate(R.layout.item_simple, parent, false));
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ViewHolder vh = (ViewHolder) holder;
+                vh.text.setText("Fake Item " + (position + 1));
+                vh.text2.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+            }
+
+            @Override
+            public int getItemCount() {
+                return 20;
+            }
+
+            class ViewHolder extends RecyclerView.ViewHolder {
+
+                TextView text;
+                TextView text2;
+
+                public ViewHolder(View itemView) {
+                    super(itemView);
+
+                    text = (TextView) itemView.findViewById(R.id.text);
+                    text2 = (TextView) itemView.findViewById(R.id.text2);
+                }
+
+            }
+        });
+    }
+    
+
+}

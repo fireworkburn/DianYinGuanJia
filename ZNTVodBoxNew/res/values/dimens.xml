@@ -35,4 +35,9 @@
     
     <dimen name="btn_fab_size">56dp</dimen>
     <dimen name="btn_fab_margins">16dp</dimen>
+    
+    
+    <dimen name="shop_detail_opr_magin">12dp</dimen>
+    <dimen name="shop_detail_opr_icon_size">28dp</dimen>
+    
 </resources>

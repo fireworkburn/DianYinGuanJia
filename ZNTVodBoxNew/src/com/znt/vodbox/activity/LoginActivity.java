@@ -56,6 +56,8 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
     private HttpLoginPresenter httpLoginPresenter = null;
     private Handler handler = new Handler();
     
+    private String loginType = "0";//1, 不显示splash
+    
     private boolean isClickLogin = false;
     private long startTime = 0;
     private final long finishTime = 1000 * 3;
@@ -74,6 +76,10 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
         _loginButton = (Button)findViewById(R.id.btn_login);
         linearLayout = (LinearLayout) findViewById(R.id.view_login_splash);
         viewSpBg = findViewById(R.id.view_login_splash_bg);
+        
+        loginType = getIntent().getStringExtra("LoginType");
+        if(TextUtils.isEmpty(loginType))
+        	loginType = "0";
         
         _loginButton.setOnClickListener(new View.OnClickListener() 
         {
@@ -106,35 +112,44 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
         	}
         });
         
-        mSplashView = new SplashView(this);
-		handler.postDelayed(new Runnable() 
-		{
-			@Override
-			public void run() 
-			{
-				mSplashView.stopRotate();
-				handler.postDelayed(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						if(MyApplication.isLogin)
-							goHomePage();
-						else
-						{
-							showTopView(true);
-							setCenterString("用户登录");
-							hideSplash();
-						}
-					}
-				}, 500);
-			}
-		}, finishTime);
-    	linearLayout.addView(mSplashView);
-    	
+        if(loginType.equals("0"))
+        {
+        	mSplashView = new SplashView(this);
+    		handler.postDelayed(new Runnable() 
+    		{
+    			@Override
+    			public void run() 
+    			{
+    				mSplashView.stopRotate();
+    				handler.postDelayed(new Runnable() {
+    					
+    					@Override
+    					public void run() {
+    						// TODO Auto-generated method stub
+    						if(MyApplication.isLogin)
+    							goHomePage();
+    						else
+    						{
+    							showTopView(true);
+    							setCenterString(getResources().getString(R.string.user_login));
+    							hideSplash();
+    						}
+    					}
+    				}, 500);
+    			}
+    		}, finishTime);
+        	linearLayout.addView(mSplashView);
+        }
+        else
+        {
+        	showTopView(true);
+        	viewSpBg.setVisibility(View.GONE);
+			setCenterString(getResources().getString(R.string.user_login));
+        }
+        
     	httpLoginPresenter = new HttpLoginPresenter(getApplicationContext(), this);
     	
-    	initSMSSDK();
+    	//initSMSSDK();
     	
     	initLogin();
     }
@@ -165,7 +180,7 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
         String password = _passwordText.getText().toString();
         if(email.isEmpty())
         {
-        	_emailText.setError("请输入正确的邮箱或者手机号码");
+        	_emailText.setError(getResources().getString(R.string.account_number_error_hint));
         	return false;
         }
         if (android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -175,13 +190,13 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
         } 
         else 
         {
-        	 _emailText.setError("请输入正确的邮箱或者手机号码");
+        	 _emailText.setError(getResources().getString(R.string.account_number_error_hint));
         	 return false;
         }
 
         if (password.isEmpty() || password.length() < 6 || password.length() > 12) 
         {
-            _passwordText.setError("请输入6到10位的字母数字");
+            _passwordText.setError(getResources().getString(R.string.account_pwd_error_hint));
             return false;
         } 
         else 
@@ -358,7 +373,11 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
 	{
 		// TODO Auto-generated method stub
 		if(isClickLogin)
-			showProgressDialog(getActivity(), "正在登录．．．");;
+		{
+			//showProgressDialog(getActivity(), "正在登录．．．");;
+			_loginButton.setText(getResources().getString(R.string.login_doing));
+			_loginButton.setClickable(false);
+		}
 	}
 
 	@Override
@@ -366,7 +385,9 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
 	{
 		// TODO Auto-generated method stub
 		Snackbar.make(_loginButton, error, 0).show();
-		dismissDialog();
+		_loginButton.setText(getResources().getString(R.string.login));
+		_loginButton.setClickable(true);
+		//dismissDialog();
 	}
 
 	@Override
@@ -389,5 +410,28 @@ public class LoginActivity extends BaseActivity implements IHttpLoginView
 				}
 			}, endTime);
 		}*/
+	}
+	
+	private long touchTime = 0;
+	@Override
+	public void onBackPressed()
+	{
+		if((System.currentTimeMillis() - touchTime) < 2000)
+		{
+			 closeApp();
+			 super.onBackPressed();
+			// TODO Auto-generated method stub
+		}
+	    else
+		{
+			showToast(getResources().getString(R.string.exit_hint));
+			touchTime = System.currentTimeMillis();
+		}
+	}
+	private void closeApp()
+	{
+		 closeAllActivity();
+		 android.os.Process.killProcess(android.os.Process.myPid());
+		 System.exit(0);
 	}
 }

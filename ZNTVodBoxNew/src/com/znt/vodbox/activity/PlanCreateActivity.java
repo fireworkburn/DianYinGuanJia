@@ -267,7 +267,7 @@ public class PlanCreateActivity extends BaseActivity implements OnClickListener
 		
 		initWheelViews();
 		
-		showRightImageView(false);
+		showRightImageView(true);
 		
 		httpFactory = new HttpFactory(getActivity(), handler);
 		planInfor = (PlanInfor)getIntent().getSerializableExtra("PlanInfor");
@@ -275,8 +275,9 @@ public class PlanCreateActivity extends BaseActivity implements OnClickListener
 		
 		if(!isEdit)
 		{
-			setCenterString("创建计划");
-			setRightText("确认添加");
+			setCenterString(getResources().getString(R.string.create_album));
+			setRightTopIcon(R.drawable.icon_edit_suc_white);
+			//setRightText("确认添加");
 			/*if(planInfor == null)
 				planInfor = new PlanInfor();*/
 			
@@ -294,8 +295,9 @@ public class PlanCreateActivity extends BaseActivity implements OnClickListener
 		}
 		else
 		{
-			setCenterString("编辑计划");
-			setRightText("完成编辑");
+			setCenterString(getResources().getString(R.string.edit_album));
+			setRightTopIcon(R.drawable.icon_edit_suc_white);
+			//setRightText("完成编辑");
 			showCurPlanInfor();
 		}
 			

@@ -1,24 +1,19 @@
 package com.znt.vodbox.dialog;
 
-import java.util.List;
-
-import com.znt.vodbox.R;
-import com.znt.vodbox.entity.LocalDataEntity;
-import com.znt.vodbox.factory.HttpFactory;
-import com.znt.vodbox.http.HttpMsg;
-
 import android.app.Dialog;
 import android.content.Context;
-import android.net.wifi.ScanResult;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.znt.vodbox.R;
+import com.znt.vodbox.factory.HttpFactory;
+import com.znt.vodbox.http.HttpMsg;
 
 public class VideoDirectionDialog extends Dialog
 {
@@ -66,9 +61,18 @@ public class VideoDirectionDialog extends Dialog
 		httpFactory = new HttpFactory(context, handler);
 		
 	    setScreenBrightness();
-	    Window window = getWindow();
+	    /*Window window = getWindow();
 		window.setWindowAnimations(R.style.MMTheme_DataSheet);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);*/
+		
+		parentView.setOnClickListener(new android.view.View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dismiss();
+			}
+		});
 	}
 	
 	public void showDialog(String screenOri, String devId)

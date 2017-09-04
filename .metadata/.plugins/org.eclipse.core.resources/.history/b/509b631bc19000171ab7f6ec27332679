@@ -1,0 +1,24 @@
+package com.znt.vodbox.activity;
+
+import android.os.Bundle;
+
+import com.znt.vodbox.R;
+
+public class AddDeviceActivity extends BaseActivity
+{
+	
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.activity_device_add);
+		
+		showTopView(true);
+        setCenterString("我们的分区");
+        setRightTopIcon(R.drawable.icon_add_off);
+	}
+	
+}

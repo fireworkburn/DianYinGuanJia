@@ -87,7 +87,7 @@ public class VolumeSetDialog extends Dialog
 				seekBar.setProgress(deviceInfor.getVolume());
 				
 				isUpdateRunning = false;
-				Toast.makeText(context, "无网络连接", 0).show();
+				Toast.makeText(context, "无网络连接", 0).show();//net_work_error_hint
 			}
 		};
 	};

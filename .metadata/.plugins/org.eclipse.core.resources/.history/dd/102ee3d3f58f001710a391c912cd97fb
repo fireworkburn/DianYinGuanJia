@@ -1,0 +1,43 @@
+package com.znt.vodbox.activity;
+
+import android.os.Bundle;
+
+import com.znt.vodbox.R;
+import com.znt.vodbox.view.ItemTextView;
+
+public class ShopSettingActivity extends BaseActivity
+{
+
+	private ItemTextView itvName = null;
+	private ItemTextView itvAddr = null;
+	private ItemTextView itvOritation = null;
+	private ItemTextView itvLastOnline = null;
+	private ItemTextView itvEndTime = null;
+	private ItemTextView itvVersion = null;
+	private ItemTextView itvWifiName = null;
+	private ItemTextView itvWifiPwd = null;
+	private ItemTextView itvIp = null;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
+	{
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.view_shop_setting);
+		
+		setCenterString(getResources().getString(R.string.shop_setting));
+		
+		itvName = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvAddr = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvOritation = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvLastOnline = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvEndTime = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvVersion = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvWifiName = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvWifiPwd = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		itvIp = (ItemTextView)findViewById(R.id.itv_set_my_speaker);
+		
+	}
+	
+}

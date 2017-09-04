@@ -19,7 +19,7 @@ public class SplashView extends View{
 	private int height;
 	private int[] colorArray;//小圆颜色的数组
 	private static final int MAX_DOT_CONUNT=6;//最大小圆的个数
-	private static int BIG_CIRCLE_RADIUS=80;//小圆距离屏幕中心的距离
+	private static int BIG_CIRCLE_RADIUS=108;//小圆距离屏幕中心的距离
 	private static final int S_CIRCLE_RADIUS=10;//小圆的半径
 	private float singleAngle;//每个小圆之间的夹角
 	private float rotateAngle=0;//旋转动画转动的角度
