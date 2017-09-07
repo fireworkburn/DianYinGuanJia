@@ -85,7 +85,7 @@ public class NormalDeviceVH extends BaseViewHolder<DeviceInfor>
 				tvPlaySong.setText(context.getResources().getString(R.string.no_song_play_offline));
 			else
 				tvPlaySong.setText(infor.getCurPlaySong());
-			tvNetStatus.setTextColor(context.getResources().getColor(R.color.text_black_mid));
+			tvNetStatus.setTextColor(context.getResources().getColor(R.color.red));
 			tvNetStatus.setText(context.getResources().getString(R.string.net_status_offline));
 			ivNetStatus.setImageResource(R.drawable.icon_net_status_offline);
 		}

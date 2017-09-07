@@ -29,10 +29,11 @@ import com.znt.vodbox.adapter.PlanListAdapter;
 import com.znt.vodbox.entity.PlanInfor;
 import com.znt.vodbox.entity.SubPlanInfor;
 import com.znt.vodbox.factory.HttpFactory;
+import com.znt.vodbox.holder.PlanItemVH.OnItemOperClickListener;
 import com.znt.vodbox.http.HttpMsg;
 import com.znt.vodbox.http.HttpRequestID;
-import com.znt.vodbox.mvp.p.GetPlanListPresenter;
-import com.znt.vodbox.mvp.v.IGetPlanListView;
+import com.znt.vodbox.mvp.p.PlanOperListPresenter;
+import com.znt.vodbox.mvp.v.IPlanOperView;
 import com.znt.vodbox.utils.ViewUtils;
 import com.znt.vodbox.view.ISFooterView;
 import com.znt.vodbox.view.RefreshRecyclerView;
@@ -43,7 +44,7 @@ import com.znt.vodbox.view.RefreshRecyclerView;
  * @author yan.yu 
  * @date 2016-6-12 上午1:25:10  
  */
-public class PlanListActivity extends BaseActivity implements IGetPlanListView
+public class PlanListActivity extends BaseActivity implements IPlanOperView, OnItemOperClickListener
 {
 	
 	private RefreshRecyclerView listView = null;
@@ -56,7 +57,7 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 	private PlanListAdapter adapter = null;
 	private HttpFactory httpFactory = null;
 	
-	private GetPlanListPresenter getPlanListPresenter = null;
+	private PlanOperListPresenter getPlanListPresenter = null;
 	
 	private PlanInfor planInfor = null;
 	private String terminalId = null;
@@ -154,10 +155,10 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 		tvRight = (TextView)findViewById(R.id.tv_plan_list_rightopr);
 		listView = (RefreshRecyclerView)findViewById(R.id.lv_plan);
 		footer = new ISFooterView(getApplicationContext());
-		adapter = new PlanListAdapter(getApplicationContext(), planList);
+		adapter = new PlanListAdapter(getApplicationContext(), planList,this);
 		httpFactory = new HttpFactory(getActivity(), handler);
 		
-		getPlanListPresenter = new GetPlanListPresenter(getApplicationContext(), this);
+		getPlanListPresenter = new PlanOperListPresenter(getApplicationContext(), this);
 		
 		listView.setAdapter(adapter);
 		adapter.addFootView(footer);
@@ -271,13 +272,13 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 				// TODO Auto-generated method stub
 				if(isRunning)
 					return;
-				showLeftView();
 				planList.clear();
 				adapter.notifyDataSetChanged();
 				pageNo = 1;
 				status = "0";
 				isClickLoad = true;
 				getCurPlans();
+				showLeftView();
 			}
 		});
 		viewRight.setOnClickListener(new OnClickListener() 
@@ -288,13 +289,13 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 				// TODO Auto-generated method stub
 				if(isRunning)
 					return;
-				showRightView();
 				planList.clear();
 				adapter.notifyDataSetChanged();
 				pageNo = 1;
 				status = "1";
 				isClickLoad = true;
 				getCurPlans();
+				showRightView();
 			}
 		});
 		getCurPlans();
@@ -302,6 +303,7 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 	}
 	private void showLeftView()
 	{
+		adapter.setStatus(status);
 		viewLeft.setSelected(true);
 		viewRight.setSelected(false);
 		tvLeft.setTextColor(getResources().getColor(R.color.text_blue_on));
@@ -309,6 +311,7 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 	}
 	private void showRightView()
 	{
+		adapter.setStatus(status);
 		viewLeft.setSelected(false);
 		viewRight.setSelected(true);
 		tvLeft.setTextColor(getResources().getColor(R.color.text_black_on));
@@ -364,26 +367,6 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
-	/**
-	*callbacks
-	*//*
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-	{
-		// TODO Auto-generated method stub
-		if(status.equals("0"))
-		{
-			if(arg2 >= 1)
-				arg2 = arg2 - 1;
-			Bundle bundle = new Bundle();
-			bundle.putSerializable("PlanInfor", planList.get(arg2));
-			bundle.putBoolean("IS_EDIT", true);
-			bundle.putString("terminalId", terminalId);
-			bundle.putString("terminalName", terminalName);
-			ViewUtils.startActivity(getActivity(), PlanDetailActivity.class, bundle, 2);
-		}
-	}*/
-	
 	@Override
 	public void requestRunning(int requestId) {
 		// TODO Auto-generated method stub
@@ -399,52 +382,64 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 		isClickLoad = false;
 	}
 	@Override
-	public void requestSuccess(int requestId, List<PlanInfor> tempList, int total) 
+	public void requestSuccess(int requestId, Object obj, int total) 
 	{
 		// TODO Auto-generated method stub
-		isClickLoad = false;
-		showLoadingView(false);
-		isRunning = false;
 		if(requestId == HttpRequestID.GET_SPEAKER_PLAN_LIST)
 		{
-			if(total > 0)
+			List<PlanInfor> tempList = (List<PlanInfor>)obj;
+			isClickLoad = false;
+			showLoadingView(false);
+			isRunning = false;
+			if(requestId == HttpRequestID.GET_SPEAKER_PLAN_LIST)
 			{
-				if(TextUtils.isEmpty(userId))
+				if(total > 0)
 				{
-					if(status.equals("0"))
-						setCenterString("当前计划(" + total + ")");
+					if(TextUtils.isEmpty(userId))
+					{
+						if(status.equals("0"))
+							setCenterString("当前计划(" + total + ")");
+						else
+							setCenterString("历史计划(" + total + ")");
+					}
+						
 					else
-						setCenterString("历史计划(" + total + ")");
+						setCenterString("区域计划(" + total + ")");
 				}
-					
+				int oldSize = planList.size();
+				if(pageNo == 1)
+					planList.clear();
+				
+				if(tempList.size() > 0)
+					planList.addAll(tempList);
+				if(planList.size() == 0)
+				{
+					showNoDataView("您还没有创建计划哦~");
+				}
+				if(planList.size() >= total)
+				{
+					footer.setVisibility(View.GONE);
+				}
 				else
-					setCenterString("区域计划(" + total + ")");
+				{
+					footer.setVisibility(View.VISIBLE);
+				}
+				hideHintView();
+				
+				pageNo ++;
+				
+				adapter.notifyItemRangeChanged(oldSize, planList.size());
+				hideHintView();
+				listView.dismissSwipeRefresh();
 			}
-			int oldSize = planList.size();
-			if(pageNo == 1)
-				planList.clear();
-			
-			if(tempList.size() > 0)
-				planList.addAll(tempList);
-			if(planList.size() == 0)
-			{
-				showNoDataView("您还没有创建计划哦~");
-			}
-			if(planList.size() >= total)
-			{
-				footer.setVisibility(View.GONE);
-			}
-			else
-			{
-				footer.setVisibility(View.VISIBLE);
-			}
-			hideHintView();
-			
-			pageNo ++;
-			
-			adapter.notifyItemRangeChanged(oldSize, planList.size());
-			hideHintView();
-			listView.dismissSwipeRefresh();
+		}
+		if(requestId == HttpRequestID.DELETE_PLAN)
+		{
+			getCurPlans();
+		}
+		else if(requestId == HttpRequestID.START_PLAN)
+		{
+			getCurPlans();
 		}
 		
 	}
@@ -452,6 +447,18 @@ public class PlanListActivity extends BaseActivity implements IGetPlanListView
 	public String getTerminalId() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	@Override
+	public void onStartClick(int index) 
+	{
+		// TODO Auto-generated method stub
+		getPlanListPresenter.startPlan(planList.get(index).getPlanId());
+	}
+	@Override
+	public void onDeleteClick(int index)
+	{
+		// TODO Auto-generated method stub
+		getPlanListPresenter.deletePlan(planList.get(index).getPlanId());
 	}
 }
  

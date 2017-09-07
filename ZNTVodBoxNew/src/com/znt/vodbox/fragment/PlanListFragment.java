@@ -13,27 +13,6 @@ package com.znt.vodbox.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.znt.diange.mina.entity.UserInfor;
-import com.znt.vodbox.R;
-import com.znt.vodbox.activity.PlanDetailActivity;
-import com.znt.vodbox.adapter.Action;
-import com.znt.vodbox.adapter.PlanListAdapter;
-import com.znt.vodbox.entity.LocalDataEntity;
-import com.znt.vodbox.entity.PlanInfor;
-import com.znt.vodbox.entity.SubPlanInfor;
-import com.znt.vodbox.factory.HttpFactory;
-import com.znt.vodbox.http.HttpMsg;
-import com.znt.vodbox.http.HttpRequestID;
-import com.znt.vodbox.http.HttpResult;
-import com.znt.vodbox.mvp.p.GetPlanListPresenter;
-import com.znt.vodbox.mvp.v.IGetPlanListView;
-import com.znt.vodbox.utils.ViewUtils;
-import com.znt.vodbox.view.ISFooterView;
-import com.znt.vodbox.view.RefreshRecyclerView;
-import com.znt.vodbox.view.HintView.OnHintListener;
-import com.znt.vodbox.view.listview.LJListView;
-import com.znt.vodbox.view.listview.LJListView.IXListViewListener;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,10 +22,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.znt.diange.mina.entity.UserInfor;
+import com.znt.vodbox.R;
+import com.znt.vodbox.activity.PlanDetailActivity;
+import com.znt.vodbox.adapter.Action;
+import com.znt.vodbox.adapter.PlanListAdapter;
+import com.znt.vodbox.entity.LocalDataEntity;
+import com.znt.vodbox.entity.PlanInfor;
+import com.znt.vodbox.entity.SubPlanInfor;
+import com.znt.vodbox.http.HttpMsg;
+import com.znt.vodbox.http.HttpRequestID;
+import com.znt.vodbox.mvp.p.PlanOperListPresenter;
+import com.znt.vodbox.mvp.v.IPlanOperView;
+import com.znt.vodbox.utils.ViewUtils;
+import com.znt.vodbox.view.ISFooterView;
+import com.znt.vodbox.view.RefreshRecyclerView;
 
 /** 
  * @ClassName: ShopFragment 
@@ -54,7 +46,7 @@ import android.widget.TextView;
  * @author yan.yu 
  * @date 2016-6-1 涓嬪崍3:01:27  
  */
-public class PlanListFragment extends BaseFragment implements IGetPlanListView
+public class PlanListFragment extends BaseFragment implements IPlanOperView
 {
 
 	private View parentView = null;
@@ -67,7 +59,7 @@ public class PlanListFragment extends BaseFragment implements IGetPlanListView
 	private ISFooterView footer = null;
 	private PlanListAdapter adapter = null;
 	
-	private GetPlanListPresenter getPlanListPresenter = null;
+	private PlanOperListPresenter getPlanListPresenter = null;
 	
 	private PlanInfor planInfor = null;
 	private String terminalId = null;
@@ -160,9 +152,9 @@ public class PlanListFragment extends BaseFragment implements IGetPlanListView
 			tvRight = (TextView)parentView.findViewById(R.id.tv_plan_list_rightopr);
 			listView = (RefreshRecyclerView)parentView.findViewById(R.id.lv_plan);
 			footer = new ISFooterView(getActivity());
-			adapter = new PlanListAdapter(getActivity(), planList);
+			adapter = new PlanListAdapter(getActivity(), planList, null);
 			
-			getPlanListPresenter = new GetPlanListPresenter(getActivity(), this);
+			getPlanListPresenter = new PlanOperListPresenter(getActivity(), this);
 			
 			listView.setAdapter(adapter);
 			adapter.addFootView(footer);
@@ -420,45 +412,62 @@ public class PlanListFragment extends BaseFragment implements IGetPlanListView
 		
 	}
 	@Override
-	public void requestSuccess(int requestId, List<PlanInfor> tempList, int total) 
+	public void requestSuccess(int requestId, Object obj, int total) 
 	{
 		// TODO Auto-generated method stub
 		if(requestId == HttpRequestID.GET_SPEAKER_PLAN_LIST)
 		{
-			if(total > 0)
+			List<PlanInfor> tempList = (List<PlanInfor>)obj;
+			showLoadingView(false);
+			if(requestId == HttpRequestID.GET_SPEAKER_PLAN_LIST)
 			{
-				if(TextUtils.isEmpty(userId))
-					setCenterString("我的播放计划(" + total + ")");
+				if(total > 0)
+				{
+					if(TextUtils.isEmpty(userId))
+					{
+						if(status.equals("0"))
+							setCenterString("当前计划(" + total + ")");
+						else
+							setCenterString("历史计划(" + total + ")");
+					}
+						
+					else
+						setCenterString("区域计划(" + total + ")");
+				}
+				int oldSize = planList.size();
+				if(pageNo == 1)
+					planList.clear();
+				
+				if(tempList.size() > 0)
+					planList.addAll(tempList);
+				if(planList.size() == 0)
+				{
+					showNoDataView("您还没有创建计划哦~");
+				}
+				if(planList.size() >= total)
+				{
+					footer.setVisibility(View.GONE);
+				}
 				else
-					setCenterString("区域计划(" + total + ")");
+				{
+					footer.setVisibility(View.VISIBLE);
+				}
+				hideHintView();
+				
+				pageNo ++;
+				
+				adapter.notifyItemRangeChanged(oldSize, planList.size());
+				hideHintView();
+				listView.dismissSwipeRefresh();
 			}
-			int oldSize = planList.size();
-			if(pageNo == 1)
-				planList.clear();
-			
-			if(tempList.size() > 0)
-				planList.addAll(tempList);
-			if(planList.size() == 0)
-			{
-				showNoDataView("您还没有创建计划哦~");
-			}
-			if(planList.size() >= total)
-			{
-				footer.setVisibility(View.GONE);
-			}
-			else
-			{
-				footer.setVisibility(View.VISIBLE);
-			}
-			adapter.notifyDataSetChanged();
-			hideHintView();
-			
-			pageNo ++;
-			
-			adapter.notifyItemRangeChanged(oldSize, planList.size());
-			hideHintView();
-			footer.setVisibility(View.GONE);
-			listView.dismissSwipeRefresh();
+		}
+		if(requestId == HttpRequestID.DELETE_PLAN)
+		{
+			getCurPlans();
+		}
+		else if(requestId == HttpRequestID.START_PLAN)
+		{
+			getCurPlans();
 		}
 		
 	}

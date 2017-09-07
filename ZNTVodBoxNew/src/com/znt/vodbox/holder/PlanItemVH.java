@@ -30,15 +30,32 @@ public class PlanItemVH extends BaseViewHolder<PlanInfor>
 	View viewOperation = null;
 	private String status = "0";
 	
+	private OnItemOperClickListener onItemOperClickListener = null;
+	
 	private PlanInfor planInfor = null;
 	private List<PlanInfor> planList = new ArrayList<PlanInfor>();
 	
-	public PlanItemVH(ViewGroup parent)
+	public PlanItemVH(ViewGroup parent, OnItemOperClickListener onItemOperClickListener)
 	{
 		super(parent, R.layout.view_parent_plan_item);
 		// TODO Auto-generated constructor stub
 		this.context = parent.getContext();
+		this.onItemOperClickListener = onItemOperClickListener;
 		onInitializeView();
+	}
+	public PlanItemVH(ViewGroup parent, OnItemOperClickListener onItemOperClickListener, String status)
+	{
+		super(parent, R.layout.view_parent_plan_item);
+		// TODO Auto-generated constructor stub
+		this.context = parent.getContext();
+		this.onItemOperClickListener = onItemOperClickListener;
+		this.status = status;
+		onInitializeView();
+	}
+	
+	public void setOnItemOperClickListener(OnItemOperClickListener onItemOperClickListener)
+	{
+		this.onItemOperClickListener = onItemOperClickListener;
 	}
 	
 	@Override
@@ -59,7 +76,9 @@ public class PlanItemVH extends BaseViewHolder<PlanInfor>
 			{
 				// TODO Auto-generated method stub
 				int pos = (Integer) itemView.getTag();
-				PlanInfor tempInfor = planList.get(pos);
+				if(onItemOperClickListener != null)
+					onItemOperClickListener.onStartClick(pos);
+				//PlanInfor tempInfor = planList.get(pos);
 				//httpFactory.startOldPlan(tempInfor.getPlanId());
 			}
 		});
@@ -70,7 +89,9 @@ public class PlanItemVH extends BaseViewHolder<PlanInfor>
 			{
 				// TODO Auto-generated method stub
 				int pos = (Integer) itemView.getTag();
-				PlanInfor tempInfor = planList.get(pos);
+				if(onItemOperClickListener != null)
+					onItemOperClickListener.onDeleteClick(pos);
+				//PlanInfor tempInfor = planList.get(pos);
 				//httpFactory.deleteOldPlan(tempInfor.getPlanId());
 			}
 		});
@@ -141,5 +162,9 @@ public class PlanItemVH extends BaseViewHolder<PlanInfor>
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	public interface OnItemOperClickListener
+	{
+		public void onStartClick(int index);
+		public void onDeleteClick(int index);
+	}
 }

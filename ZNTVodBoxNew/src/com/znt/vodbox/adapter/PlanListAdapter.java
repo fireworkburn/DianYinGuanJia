@@ -5,6 +5,7 @@ import java.util.List;
 import com.znt.vodbox.entity.PlanInfor;
 import com.znt.vodbox.holder.BaseViewHolder;
 import com.znt.vodbox.holder.PlanItemVH;
+import com.znt.vodbox.holder.PlanItemVH.OnItemOperClickListener;
 
 import android.content.Context;
 import android.view.ViewGroup;
@@ -14,18 +15,25 @@ import android.view.ViewGroup;
 * @Project£∫InforStream
 * @Des:  ≈‰∆˜
 */
-public class PlanListAdapter extends RecycleViewAdapter<PlanInfor>
+public class PlanListAdapter extends RecycleViewAdapter<PlanInfor> 
 {
 
 	private Context context = null;
-	
-	public PlanListAdapter(Context context, List<PlanInfor> data) 
+	private String status = "0";
+	private OnItemOperClickListener onItemOperClickListener = null;
+	public PlanListAdapter(Context context, List<PlanInfor> data, OnItemOperClickListener onItemOperClickListener) 
 	{
 		super(context, data);
 		// TODO Auto-generated constructor stub
 		this.context = context;
+		this.onItemOperClickListener = onItemOperClickListener;
 	}
 
+	public void setStatus(String status)
+	{
+		this.status = status;
+	}
+	
 	@Override
 	public BaseViewHolder<PlanInfor> onCreateBaseViewHolder(ViewGroup parent, int viewType) 
 	{
@@ -33,7 +41,7 @@ public class PlanListAdapter extends RecycleViewAdapter<PlanInfor>
 		BaseViewHolder<PlanInfor> viewHolder = null;
 		if(viewType == 0)// √ª”–Õº∆¨
     	{
-        	viewHolder = new PlanItemVH(parent);
+        	viewHolder = new PlanItemVH(parent, onItemOperClickListener, status);
     	}
         return viewHolder;
 	}
